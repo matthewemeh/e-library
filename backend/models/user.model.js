@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
 const { Schema, model } = mongoose;
 
@@ -26,6 +27,7 @@ const UserSchema = new Schema(
   },
   { minimize: false, timestamps: true, versionKey: false, collection: 'users' }
 );
+UserSchema.plugin(mongoosePaginate);
 
 UserSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });

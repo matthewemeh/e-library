@@ -9,10 +9,12 @@ router.route('/register').post(async (req, res) => {
 
   try {
     const newUser = new User({ name, email, password, role });
-    const imageRef = ref(storage, `users/${newUser._id}`);
-    const snapshot = await uploadBytes(imageRef, profileImage);
-    const url = await getDownloadURL(snapshot.ref);
-    newUser.profileImageUrl = url;
+    if (profileImage) {
+      const imageRef = ref(storage, `users/${newUser._id}`);
+      const snapshot = await uploadBytes(imageRef, profileImage);
+      const url = await getDownloadURL(snapshot.ref);
+      newUser.profileImageUrl = url;
+    }
 
     const user = await newUser.save();
     res.status(201).json(user);
@@ -24,23 +26,38 @@ router.route('/register').post(async (req, res) => {
 /* update specific user */
 router.route('/:id').patch(async (req, res) => {
   const { id } = req.params;
-  const { name, password, profileImage, role, emailValidated } = req.body;
+  const { name, password, profileImage, role, emailValidated, userID } = req.body;
 
   try {
-    const user = await User.findById(id);
-
-    if (name) user.name = name;
-    if (role) user.role = role;
-    if (password) user.password = password;
-    if (profileImage) {
-      const imageRef = ref(storage, `users/${user._id}`);
-      const snapshot = await uploadBytes(imageRef, profileImage);
-      const url = await getDownloadURL(snapshot.ref);
-      user.profileImageUrl = url;
+    const user = await User.findById(userID);
+    const isOwner = user && user._id == id;
+    const isAdmin = user && user.role !== roles.USER;
+    if (!(isAdmin || isOwner)) {
+      return res.status(401).send('You are not authorized to carry out this operation');
     }
-    if (emailValidated !== undefined) user.emailValidated = emailValidated;
 
-    const updatedUser = await user.save();
+    const userToBeUpdated = await User.findById(id);
+    if (!userToBeUpdated) {
+      return res.status(500).send('User does not exist');
+    }
+
+    if (isAdmin) {
+      if (role) userToBeUpdated.role = role;
+    }
+    if (isOwner) {
+      if (name) userToBeUpdated.name = name;
+      if (password) userToBeUpdated.password = password;
+      if (profileImage) {
+        const imageRef = ref(storage, `users/${userToBeUpdated._id}`);
+        const snapshot = await uploadBytes(imageRef, profileImage);
+        const url = await getDownloadURL(snapshot.ref);
+        userToBeUpdated.profileImageUrl = url;
+      }
+    }
+
+    if (emailValidated !== undefined) userToBeUpdated.emailValidated = emailValidated;
+
+    const updatedUser = await userToBeUpdated.save();
     res.status(200).json(updatedUser);
   } catch (err) {
     res.status(400).send(err.message);
@@ -56,11 +73,25 @@ router.route('/login').post((req, res) => {
     .catch(err => res.status(400).send(err.message));
 });
 
-/* get all users */
-router.route('/').get((req, res) => {
-  User.find({ role: roles.USER })
-    .then(users => res.status(200).json(users))
-    .catch(err => res.status(400).send(err.message));
+/* get users */
+router.route('/').get(async (req, res) => {
+  const { userID } = req.body;
+
+  try {
+    const user = await User.findById(userID);
+    const isUser = !user || user.role === roles.USER;
+    if (isUser) {
+      return res.status(401).send('You are not authorized to carry out this operation');
+    }
+
+    const page = Number(req.query['page'] ?? 1);
+    const limit = Number(req.query['limit'] ?? 10);
+
+    const result = await User.paginate({}, { page, limit });
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 });
 
 /* get specific user */
@@ -73,10 +104,22 @@ router.route('/:id').get((req, res) => {
 });
 
 /* delete specific user */
-router.route('/:id').delete((req, res) =>
-  User.findByIdAndDelete(req.params.id)
-    .then(() => res.json('User removed.'))
-    .catch(err => res.status(400).send(err.message))
-);
+router.route('/:id').delete(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { userID } = req.body;
+    const user = await User.findById(userID);
+    const isOwnerOrAdmin = user && (user.role !== roles.USER || user._id == id);
+    if (!isOwnerOrAdmin) {
+      return res.status(401).send('You are not authorized to carry out this operation');
+    }
+
+    await User.findByIdAndDelete(id);
+    res.status(200).send('User removed');
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
 
 module.exports = router;
