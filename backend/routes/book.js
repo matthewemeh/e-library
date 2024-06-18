@@ -7,10 +7,16 @@ const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/sto
 /* get books */
 router.route('/').get(async (req, res) => {
   try {
-    const page = Number(req.query['page'] ?? 1);
-    const limit = Number(req.query['limit'] ?? 10);
+    const page = Number(req.query['page']);
+    const limit = Number(req.query['limit']);
+    let result;
 
-    const result = await Book.paginate({}, { page, limit });
+    if (isNaN(page) || isNaN(limit)) {
+      result = await Book.find();
+    } else {
+      result = await Book.paginate({}, { page, limit });
+    }
+
     res.status(200).json(result);
   } catch (err) {
     res.status(400).send(err.message);
@@ -20,8 +26,8 @@ router.route('/').get(async (req, res) => {
 /* create book */
 router.route('/').post(async (req, res) => {
   const { authors, content, pages, imageContents, title, userID } = req.body;
-  const page = Number(req.query['page'] ?? 1);
-  const limit = Number(req.query['limit'] ?? 10);
+  const page = Number(req.query['page']);
+  const limit = Number(req.query['limit']);
 
   try {
     const user = await User.findById(userID);
@@ -40,7 +46,13 @@ router.route('/').post(async (req, res) => {
     }
 
     await newBook.save();
-    const books = await Book.paginate({}, { page, limit });
+
+    let books;
+    if (isNaN(page) || isNaN(limit)) {
+      books = await Book.find();
+    } else {
+      books = await Book.paginate({}, { page, limit });
+    }
     res.status(201).json(books);
   } catch (err) {
     res.status(400).send(err.message);
@@ -50,8 +62,8 @@ router.route('/').post(async (req, res) => {
 /* update book */
 router.route('/:id').patch(async (req, res) => {
   const { id } = req.params;
-  const page = Number(req.query['page'] ?? 1);
-  const limit = Number(req.query['limit'] ?? 10);
+  const page = Number(req.query['page']);
+  const limit = Number(req.query['limit']);
   const { reads, pages, title, authors, content, category, bookmarks, isDeleted, imageContents } =
     req.body;
 
@@ -87,7 +99,13 @@ router.route('/:id').patch(async (req, res) => {
     }
 
     await book.save();
-    const books = await Book.paginate({}, { page, limit });
+
+    let books;
+    if (isNaN(page) || isNaN(limit)) {
+      books = await Book.find();
+    } else {
+      books = await Book.paginate({}, { page, limit });
+    }
     res.status(200).json(books);
   } catch (err) {
     res.status(400).send(err.message);

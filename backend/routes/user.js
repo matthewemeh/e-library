@@ -84,10 +84,16 @@ router.route('/').get(async (req, res) => {
       return res.status(401).send('You are not authorized to carry out this operation');
     }
 
-    const page = Number(req.query['page'] ?? 1);
-    const limit = Number(req.query['limit'] ?? 10);
+    const page = Number(req.query['page']);
+    const limit = Number(req.query['limit']);
+    let result;
 
-    const result = await User.paginate({}, { page, limit });
+    if (isNaN(page) || isNaN(limit)) {
+      result = await User.find();
+    } else {
+      result = await User.paginate({}, { page, limit });
+    }
+
     res.status(200).json(result);
   } catch (err) {
     res.status(400).send(err.message);
