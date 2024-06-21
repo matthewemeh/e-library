@@ -3,7 +3,7 @@ interface Props {
 }
 
 const PageLayout: React.FC<Props> = ({ children }) => {
-  return <div className='p-3 rounded-md'>{children}</div>;
+  return <div className='bg-white rounded-md p-8 dark:dark:bg-nile-blue-900'>{children}</div>;
 };
 
 export default PageLayout;

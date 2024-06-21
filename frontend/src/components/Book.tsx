@@ -14,7 +14,7 @@ const Book: React.FC<Props> = ({ book }) => {
   return (
     <Link
       to={`/books/${_id}`}
-      className='relative bg-white rounded-md overflow-clip shadow-lg w-[200px] h-[250px] grid grid-rows-[70%_12%_12%] gap-1 dark:bg-nile-blue-950 ease-linear duration-200 hover:scale-105'>
+      className='relative bg-white rounded-md overflow-clip shadow-lg w-[190px] h-[250px] grid grid-rows-[70%_12%_12%] gap-1 dark:bg-nile-blue-950 ease-linear duration-200 hover:scale-105'>
       {imageLoaded || <GiBookCover className='w-full h-3/5 absolute z-[1] top-5 left-0' />}
       <img
         alt=''

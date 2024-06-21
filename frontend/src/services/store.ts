@@ -5,24 +5,24 @@ import { configureStore } from '@reduxjs/toolkit';
 import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import userApi from './apis/userApi/userApi';
-import bookApi from './apis/bookApi/bookApi';
 import userSlice from './apis/userApi/userSlice';
-import bookSlice from './apis/bookApi/bookSlice';
 import userDataSlice from './userData/userDataSlice';
+import bookStoreApi from './apis/bookApi/bookStoreApi';
+import bookStoreSlice from './apis/bookApi/bookStoreSlice';
 
 /* reducers */
 const reducer = combineReducers({
   user: userSlice,
-  books: bookSlice,
   userData: userDataSlice,
-  [bookApi.reducerPath]: bookApi.reducer,
-  [userApi.reducerPath]: userApi.reducer
+  bookStore: bookStoreSlice,
+  [userApi.reducerPath]: userApi.reducer,
+  [bookStoreApi.reducerPath]: bookStoreApi.reducer
 });
 
 const persistConfig = {
   storage,
   key: 'root',
-  blackList: [bookApi.reducerPath, userApi.reducerPath]
+  blackList: [bookStoreApi.reducerPath, userApi.reducerPath]
 };
 
 /* persist our store */
@@ -36,7 +36,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
       }
-    }).concat(bookApi.middleware, userApi.middleware)
+    }).concat(bookStoreApi.middleware, userApi.middleware)
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

@@ -45,3 +45,8 @@ interface PaginatedResponse {
   limit: number;
   pages: number;
 }
+
+interface BookStore {
+  pages: number;
+  books: Book[];
+}

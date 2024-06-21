@@ -4,8 +4,8 @@ import Endpoints from 'services/Endpoints';
 const { BASE_URL, INCREASE_BOOKMARKS, INCREASE_READS, BOOKS } = Endpoints;
 
 // create the createApi
-export const bookApi = createApi({
-  reducerPath: 'bookApi',
+export const bookStoreApi = createApi({
+  reducerPath: 'bookStoreApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: builder => ({
     createBook: builder.mutation({
@@ -54,6 +54,6 @@ export const {
   useDeleteBookMutation,
   useIncreaseReadsMutation,
   useIncreaseBookmarksMutation
-} = bookApi;
+} = bookStoreApi;
 
-export default bookApi;
+export default bookStoreApi;
