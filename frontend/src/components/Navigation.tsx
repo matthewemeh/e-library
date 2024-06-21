@@ -7,25 +7,23 @@ import {
   RiBookOpenLine,
   RiSettings3Line
 } from 'react-icons/ri';
-import { MdOutlineAdminPanelSettings } from 'react-icons/md';
+import { MdOutlineAdminPanelSettings, MdLocalLibrary } from 'react-icons/md';
 
 import useAuth from 'hooks/useAuth';
 import NavigationTab from './NavigationTab';
 import { PATHS } from 'routes/PathConstants';
-
-import AppIcon from '../assets/logo.svg';
 
 const Navigation = () => {
   const isAuthorized: boolean = useAuth();
   const { HOME, BOOKMARKS, PROFILE, HELP, BOOKS, SETTINGS, ADMIN } = PATHS;
 
   return (
-    <nav className='row-start-1 row-end-3 p-3 bg-white'>
+    <nav className='row-start-1 row-end-3 p-3 bg-white dark:text-zircon dark:bg-nile-blue-900'>
       <Link to={HOME} className='font-bold text-xl flex items-center gap-2'>
-        <img src={AppIcon} className='w-7 h-7' alt='' />
+        <MdLocalLibrary className='w-7 h-7 text-current' />
         E-Library
       </Link>
-      <ul className='mt-5 text-nile-blue-800 flex flex-col gap-2'>
+      <ul className='mt-5 text-nile-blue-800 flex flex-col gap-2 dark:text-zircon'>
         <li>
           <NavigationTab text='Home' to={HOME} icon={<RiHome4Line className='text-current' />} />
         </li>

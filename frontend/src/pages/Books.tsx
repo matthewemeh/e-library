@@ -1,5 +1,7 @@
+import PageLayout from 'layouts/PageLayout';
+
 const Books = () => {
-  return <div>Books</div>;
+  return <PageLayout>Books</PageLayout>;
 };
 
 export default Books;

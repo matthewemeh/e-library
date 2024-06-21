@@ -21,6 +21,7 @@ interface Book {
   createdAt: string;
   authors: string[];
   isDeleted: boolean;
+  coverImageUrl: string;
   imageContentUrls: string[];
 }
 
@@ -35,4 +36,12 @@ interface UserData {
   bookmarkedBookIDs: string[];
   booksReadInfo: BookReadInfo[];
   previouslyBookmarkedBookIDs: string[];
+}
+
+interface PaginatedResponse {
+  docs: any[];
+  page: number;
+  total: number;
+  limit: number;
+  pages: number;
 }

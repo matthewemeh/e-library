@@ -1,21 +1,20 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CaseReducer, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import userApi from './userApi';
 
-const initialState: User & UserData = {
+const initialState: User = {
   _id: '',
   name: '',
   email: '',
   role: 'USER',
   createdAt: '',
   updatedAt: '',
-  booksReadInfo: [],
   profileImageUrl: '',
-  bookmarkedBookIDs: [],
-  emailValidated: false,
-  isAuthenticated: false,
-  prefersDarkMode: false,
-  previouslyBookmarkedBookIDs: []
+  emailValidated: false
 };
+
+type ActionHandler<T> = CaseReducer<User, PayloadAction<T>>;
+
+const updateAction: ActionHandler<User> = (_, { payload }) => payload;
 
 export const userSlice = createSlice({
   name: 'user',
@@ -28,8 +27,9 @@ export const userSlice = createSlice({
   },
   extraReducers: builder => {
     // these are backend routes(endpoints) which when fufilled, return payloads that updates User object globally
-    builder.addMatcher(userApi.endpoints.register.matchFulfilled, (_, { payload }) => payload);
-    builder.addMatcher(userApi.endpoints.login.matchFulfilled, (_, { payload }) => payload);
+    builder.addMatcher(userApi.endpoints.register.matchFulfilled, updateAction);
+    builder.addMatcher(userApi.endpoints.login.matchFulfilled, updateAction);
+    builder.addMatcher(userApi.endpoints.updateUser.matchFulfilled, updateAction);
   }
 });
 

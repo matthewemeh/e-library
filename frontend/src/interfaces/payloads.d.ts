@@ -6,18 +6,31 @@ interface UserRegisterPayload {
   profileImage: File;
 }
 
+interface UserUpdatePayload {
+  _id: string;
+  role?: Role;
+  name?: string;
+  userID: string;
+  email?: string;
+  password?: string;
+  profileImage?: File;
+  emailValidated?: boolean;
+}
+
 interface UserLoginPayload {
   email: string;
   password: string;
 }
 
 interface AddBookPayload {
-  pages: number;
   title: string;
-  userRole: Role;
-  content: string;
-  authors: string[];
-  imageContents: File[];
+  pages?: number;
+  userID: string;
+  content?: string;
+  authors?: string[];
+  imageContents?: File[];
+  coverImageContent?: string;
+  params?: Record<string, any>;
 }
 
 interface UpdateBookPayload {
@@ -25,11 +38,23 @@ interface UpdateBookPayload {
   reads?: number;
   pages?: number;
   title?: string;
-  userRole?: Role;
+  userID: string;
   content?: string;
   category?: string;
   bookmarks?: number;
   authors?: string[];
   isDeleted?: boolean;
   imageContents?: File[];
+  coverImageContent?: string;
+  params?: Record<string, any>;
+}
+
+interface DeleteBookPayload {
+  _id: string;
+  userID: string;
+  params?: Record<string, any>;
+}
+
+interface GetBooksPayload {
+  params?: Record<string, any>;
 }

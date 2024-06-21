@@ -1,5 +1,7 @@
+import PageLayout from 'layouts/PageLayout';
+
 const Bookmarks = () => {
-  return <div>Bookmarks</div>;
+  return <PageLayout>Bookmarks</PageLayout>;
 };
 
 export default Bookmarks;

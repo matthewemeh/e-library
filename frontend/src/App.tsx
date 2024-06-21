@@ -1,6 +1,5 @@
 import { lazy, useMemo } from 'react';
-import type { RouteObject } from 'react-router-dom';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, RouteObject } from 'react-router-dom';
 
 import routes from 'routes';
 import Page404 from 'pages/Page404';

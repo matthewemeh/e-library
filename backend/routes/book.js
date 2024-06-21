@@ -7,14 +7,15 @@ const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/sto
 /* get books */
 router.route('/').get(async (req, res) => {
   try {
+    const category = req.query['category'] ?? 'all';
     const page = Number(req.query['page']);
     const limit = Number(req.query['limit']);
     let result;
 
     if (isNaN(page) || isNaN(limit)) {
-      result = await Book.find();
+      result = await Book.find({ category });
     } else {
-      result = await Book.paginate({}, { page, limit });
+      result = await Book.paginate({ category }, { page, limit });
     }
 
     res.status(200).json(result);
@@ -25,7 +26,7 @@ router.route('/').get(async (req, res) => {
 
 /* create book */
 router.route('/').post(async (req, res) => {
-  const { authors, content, pages, imageContents, title, userID } = req.body;
+  const { authors, content, pages, coverImageContent, imageContents, title, userID } = req.body;
   const page = Number(req.query['page']);
   const limit = Number(req.query['limit']);
 
@@ -43,6 +44,13 @@ router.route('/').post(async (req, res) => {
       const snapshot = await uploadBytes(imageRef, imageContents[i]);
       const url = await getDownloadURL(snapshot.ref);
       newBook.imageContentUrls.push(url);
+    }
+
+    if (coverImageContent) {
+      const imageRef = ref(storage, `books/${newBook._id}/${newBook._id}_cover-image`);
+      const snapshot = await uploadBytes(imageRef, coverImageContent);
+      const url = await getDownloadURL(snapshot.ref);
+      newBook.coverImageUrl = url;
     }
 
     await newBook.save();
@@ -64,8 +72,18 @@ router.route('/:id').patch(async (req, res) => {
   const { id } = req.params;
   const page = Number(req.query['page']);
   const limit = Number(req.query['limit']);
-  const { reads, pages, title, authors, content, category, bookmarks, isDeleted, imageContents } =
-    req.body;
+  const {
+    reads,
+    pages,
+    title,
+    authors,
+    content,
+    category,
+    bookmarks,
+    isDeleted,
+    imageContents,
+    coverImageContent
+  } = req.body;
 
   try {
     const { userID } = req.body;
@@ -97,6 +115,12 @@ router.route('/:id').patch(async (req, res) => {
         book.imageContentUrls.push(url);
       }
     }
+    if (coverImageContent) {
+      const imageRef = ref(storage, `books/${book._id}/${book._id}_cover-image`);
+      const snapshot = await uploadBytes(imageRef, coverImageContent);
+      const url = await getDownloadURL(snapshot.ref);
+      book.coverImageUrl = url;
+    }
 
     await book.save();
 
@@ -123,23 +147,6 @@ router.route('/:id').get(async (req, res) => {
       limit
     );
     res.status(200).json({ book, similarBooks });
-  } catch (err) {
-    res.status(400).send(err.message);
-  }
-});
-
-/* get a specific category of books */
-router.route('/category/:category').get(async (req, res) => {
-  const { category } = req.params;
-
-  try {
-    let books;
-    if (category === 'all') {
-      books = await Book.find().sort({ updatedAt: -1 });
-    } else {
-      books = await Book.find({ category });
-    }
-    res.status(200).json(books);
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -176,6 +183,8 @@ router.route('/increase-bookmarks/:id').post(async (req, res) => {
 /* delete specific book */
 router.route('/:id').delete(async (req, res) => {
   const { id } = req.params;
+  const page = Number(req.query['page']);
+  const limit = Number(req.query['limit']);
 
   try {
     const { userID } = req.body;
@@ -185,10 +194,15 @@ router.route('/:id').delete(async (req, res) => {
       return res.status(401).send('You are not authorized to carry out this operation');
     }
 
-    const book = await Book.findById(id);
-    book.isDeleted = true;
-    await book.save();
-    res.status(200).send('Book removed');
+    await Book.findByIdAndDelete(id);
+    let result;
+    if (isNaN(page) || isNaN(limit)) {
+      result = await Book.find();
+    } else {
+      result = await Book.paginate({}, { page, limit });
+    }
+
+    res.status(200).json(result);
   } catch (err) {
     res.status(400).send(err.message);
   }

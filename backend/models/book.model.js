@@ -11,6 +11,7 @@ const BookSchema = new Schema(
     authors: { type: [String], default: [] },
     category: { type: String, default: 'all' },
     isDeleted: { type: Boolean, default: false },
+    coverImageUrl: { type: String, default: '' },
     imageContentUrls: { type: [String], default: [] },
     title: { type: String, required: [true, 'is required'], minlength: 1, trim: true }
   },

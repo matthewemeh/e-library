@@ -27,7 +27,6 @@ export const showAlert = ({
     'mb-8',
     'left-1/2',
     'rounded-md',
-    'text-white',
     'text-[1rem]',
     'ease-in-out',
     'text-center',

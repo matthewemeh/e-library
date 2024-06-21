@@ -1,5 +1,7 @@
+import PageLayout from 'layouts/PageLayout';
+
 const Admin = () => {
-  return <div>Admin</div>;
+  return <PageLayout>Admin</PageLayout>;
 };
 
 export default Admin;

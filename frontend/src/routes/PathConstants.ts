@@ -6,5 +6,6 @@ export const PATHS = {
   BOOK: '/books/:id',
   PROFILE: '/profile',
   SETTINGS: '/settings',
-  BOOKMARKS: '/bookmarks'
+  BOOKMARKS: '/bookmarks',
+  BOOK_READ: '/books/:id/read'
 } as const;
