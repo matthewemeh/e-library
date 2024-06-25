@@ -41,11 +41,14 @@ router.route('/register').post(upload.any(), async (req, res) => {
 });
 
 /* update specific user */
-router.route('/:id').patch(async (req, res) => {
-  const { id } = req.params;
-  const { name, password, profileImage, role, emailValidated, userID } = req.body;
-
+router.route('/:id').patch(upload.any(), async (req, res) => {
   try {
+    const userPayload = JSON.parse(
+      req.files.find(({ fieldname }) => fieldname === USER_PAYLOAD_KEY).buffer
+    );
+    const { id } = req.params;
+    const { name, password, role, emailValidated, userID } = userPayload;
+
     const user = await User.findById(userID);
     const isOwner = user && user._id == id;
     const isAdmin = user && user.role !== roles.USER;
@@ -64,6 +67,9 @@ router.route('/:id').patch(async (req, res) => {
     if (isOwner) {
       if (name) userToBeUpdated.name = name;
       if (password) userToBeUpdated.password = password;
+
+      const profileImageFile = req.files.find(({ fieldname }) => fieldname === PROFILE_IMAGE_KEY);
+      const profileImage = profileImageFile?.buffer;
       if (profileImage) {
         const imageRef = ref(storage, `users/${userToBeUpdated._id}`);
         const snapshot = await uploadBytes(imageRef, profileImage);

@@ -33,7 +33,20 @@ export const userApi = createApi({
       query: (user: UserLoginPayload) => ({ url: LOGIN, method: 'POST', body: user })
     }),
     updateUser: builder.mutation({
-      query: (body: UserUpdatePayload) => ({ body, method: 'PATCH', url: `${USERS}/${body._id}` })
+      query: (body: UserUpdatePayload) => {
+        const bodyObject = { ...body };
+        const { profileImage } = bodyObject;
+        delete bodyObject.profileImage;
+
+        const stringifiedObject = JSON.stringify(bodyObject);
+        const documentBlob = new Blob([stringifiedObject], { type: 'application/json' });
+
+        const formData = new FormData();
+        formData.append(USER_PAYLOAD_KEY, documentBlob);
+        formData.append(PROFILE_IMAGE_KEY, profileImage as Blob);
+
+        return { body: formData, method: 'PATCH', url: `${USERS}/${body._id}` };
+      }
     })
   })
 });
