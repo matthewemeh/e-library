@@ -13,7 +13,7 @@ const Bookmarks = () => {
   const emptyBookmarksComponent = useMemo<JSX.Element>(() => {
     return (
       <div className='flex flex-col gap-5 items-center justify-center text-center'>
-        <RiBookmarkLine className='w-[80px] h-[80px]' />
+        <RiBookmarkLine className='w-20 h-20' />
         <span className='text-lg font-medium'>
           No Bookmarks here. Visit the{' '}
           <Link className='underline' to={HOME}>
