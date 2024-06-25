@@ -1,13 +1,30 @@
+const multer = require('multer');
 const router = require('express').Router();
 const storage = require('../firebase-config');
 const { User, roles } = require('../models/user.model');
-const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
+
+const upload = multer();
+
+/* Multipart key information */
+const USER_PAYLOAD_KEY = 'userPayload';
+const PROFILE_IMAGE_KEY = 'profileImage';
 
 /* register */
-router.route('/register').post(async (req, res) => {
-  const { name, email, password, profileImage, role } = req.body;
-
+router.route('/register').post(upload.any(), async (req, res) => {
   try {
+    const userPayload = JSON.parse(
+      req.files.find(({ fieldname }) => fieldname === USER_PAYLOAD_KEY).buffer
+    );
+    const { name, email, password, role } = userPayload;
+
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json('This email has already been used');
+    }
+
+    const profileImageFile = req.files.find(({ fieldname }) => fieldname === PROFILE_IMAGE_KEY);
+    const profileImage = profileImageFile?.buffer;
     const newUser = new User({ name, email, password, role });
     if (profileImage) {
       const imageRef = ref(storage, `users/${newUser._id}`);
@@ -103,6 +120,13 @@ router.route('/').get(async (req, res) => {
 /* get specific user */
 router.route('/:id').get((req, res) => {
   const { id } = req.params;
+  const email = req.query['email'];
+
+  if (email) {
+    return User.findOne({ email })
+      .then(user => res.status(200).json(user))
+      .catch(err => res.status(400).send(err.message));
+  }
 
   User.findById(id)
     .then(user => res.status(200).json(user))
@@ -122,6 +146,11 @@ router.route('/:id').delete(async (req, res) => {
     }
 
     await User.findByIdAndDelete(id);
+
+    /* delete user image */
+    const fileRef = ref(storage, `users/${id}`);
+    await deleteObject(fileRef);
+
     res.status(200).send('User removed');
   } catch (err) {
     res.status(400).send(err.message);

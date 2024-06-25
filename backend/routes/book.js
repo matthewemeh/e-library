@@ -80,7 +80,6 @@ router.route('/:id').patch(async (req, res) => {
     content,
     category,
     bookmarks,
-    isDeleted,
     imageContents,
     coverImageContent
   } = req.body;
@@ -101,7 +100,6 @@ router.route('/:id').patch(async (req, res) => {
     if (content) book.content = content;
     if (category) book.category = category;
     if (bookmarks) book.bookmarks = bookmarks;
-    if (isDeleted !== undefined) book.isDeleted = isDeleted;
     if (imageContents) {
       /* delete book images folder with id */
       const folderRef = ref(storage, `books/${id}`);
@@ -109,7 +107,7 @@ router.route('/:id').patch(async (req, res) => {
       book.imageContentUrls = [];
 
       for (let i = 0; i < imageContents.length; i++) {
-        const imageRef = ref(storage, `books/${id}/${id}_${i + 1}`);
+        const imageRef = ref(storage, `books/${book._id}/${book._id}_${i + 1}`);
         const snapshot = await uploadBytes(imageRef, imageContents[i]);
         const url = await getDownloadURL(snapshot.ref);
         book.imageContentUrls.push(url);
@@ -195,6 +193,10 @@ router.route('/:id').delete(async (req, res) => {
     }
 
     await Book.findByIdAndDelete(id);
+    /* delete book images folder with id */
+    const folderRef = ref(storage, `books/${id}`);
+    await deleteObject(folderRef);
+
     let result;
     if (isNaN(page) || isNaN(limit)) {
       result = await Book.find();

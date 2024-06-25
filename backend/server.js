@@ -17,9 +17,12 @@ connection.once('open', () => console.log('MongoDB database connection establish
 
 const userRoutes = require('./routes/user');
 const bookRoutes = require('./routes/book');
+const emailRoutes = require('./routes/email');
 
 app.use('/users', userRoutes);
 app.use('/books', bookRoutes);
+app.use('/email', emailRoutes);
+
 app.use(express.urlencoded({ extended: true }));
 
 app.listen(port, () => console.log(`Server is running on port: ${port}`));
