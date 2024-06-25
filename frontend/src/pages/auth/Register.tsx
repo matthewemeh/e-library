@@ -7,7 +7,8 @@ import { useRegisterMutation } from 'services/apis/userApi/userApi';
 import FormInput from 'components/forms/FormInput';
 import AuthButton from 'components/forms/AuthButton';
 import { addClass, removeClass, showAlert } from 'utils';
-import RiUser3Line from '../../assets/ri-user-3-line.svg';
+
+import RiUser3Line from 'assets/ri-user-3-line.svg';
 
 const Register = () => {
   const { LOGIN, VERIFY_OTP } = PATHS;
@@ -35,7 +36,6 @@ const Register = () => {
     const imageTag: HTMLImageElement = profileImagePreviewRef.current!;
 
     if (imageFile) {
-      console.log(imageFile);
       const reader = new FileReader();
       reader.readAsDataURL(imageFile);
       reader.addEventListener('load', () => {

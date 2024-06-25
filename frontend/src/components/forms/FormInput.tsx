@@ -10,6 +10,7 @@ interface Props {
   hidden?: boolean;
   inputID?: string;
   tabIndex?: number;
+  disabled?: boolean;
   readOnly?: boolean;
   inputName?: string;
   required?: boolean;
@@ -38,6 +39,7 @@ const FormInput: React.FC<Props> = ({
   tabIndex,
   required,
   readOnly,
+  disabled,
   inputRef,
   onChange,
   inputMode,
@@ -84,6 +86,7 @@ const FormInput: React.FC<Props> = ({
           value={value}
           accept={accept}
           name={inputName}
+          disabled={disabled}
           readOnly={readOnly}
           onChange={onChange}
           tabIndex={tabIndex}
@@ -96,7 +99,7 @@ const FormInput: React.FC<Props> = ({
           autoComplete={autoComplete}
           defaultValue={defaultValue}
           type={isPasswordField ? (passwordVisible ? 'text' : 'password') : type}
-          className={`text-scarpa-flow font-normal flex gap-2 items-center self-stretch border shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] w-full rounded-lg py-2.5 phones:tracking-[0.9px] focus:border-nile-blue-900 ${
+          className={`font-normal flex gap-2 items-center self-stretch border shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] w-full rounded-lg py-2.5 phones:tracking-[0.9px] focus:border-nile-blue-900 disabled:opacity-50 ${
             isPasswordField || isEmailField ? 'px-10' : 'px-3'
           } ${extraInputClassNames}`}
         />

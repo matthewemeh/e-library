@@ -1,17 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Endpoints from 'services/Endpoints';
+import Constants from '../../../Constants';
 
 const { BASE_URL, LOGIN, REGISTER, USERS } = Endpoints;
 
-const USER_PAYLOAD_KEY = 'userPayload';
-const PROFILE_IMAGE_KEY = 'profileImage';
+const { PROFILE_IMAGE_KEY, USER_PAYLOAD_KEY } = Constants;
 
 // create the createApi
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL
-  }),
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: builder => ({
     register: builder.mutation({
       query: (body: UserRegisterPayload) => {

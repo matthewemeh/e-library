@@ -7,8 +7,7 @@ const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/sto
 const upload = multer();
 
 /* Multipart key information */
-const USER_PAYLOAD_KEY = 'userPayload';
-const PROFILE_IMAGE_KEY = 'profileImage';
+const { USER_PAYLOAD_KEY, PROFILE_IMAGE_KEY } = require('../Constants');
 
 /* register */
 router.route('/register').post(upload.any(), async (req, res) => {

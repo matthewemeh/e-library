@@ -1,7 +1,8 @@
-import Loading from '../Loading';
+import { Link } from 'react-router-dom';
+import Loading from 'components/Loading';
 
 interface Props {
-  href: string;
+  to: string;
   title: string;
   hidden?: boolean;
   tabIndex?: number;
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const AuthButtonLink: React.FC<Props> = ({
-  href,
+  to,
   title,
   hidden,
   target,
@@ -26,8 +27,8 @@ const AuthButtonLink: React.FC<Props> = ({
   extraClassNames
 }) => {
   return (
-    <a
-      href={href}
+    <Link
+      to={to}
       target={target}
       hidden={hidden}
       onClick={onClick}
@@ -44,7 +45,7 @@ const AuthButtonLink: React.FC<Props> = ({
       ) : (
         title
       )}
-    </a>
+    </Link>
   );
 };
 

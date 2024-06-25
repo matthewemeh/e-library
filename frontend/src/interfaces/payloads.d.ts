@@ -29,7 +29,7 @@ interface AddBookPayload {
   content?: string;
   authors?: string[];
   imageContents?: File[];
-  coverImageContent?: string;
+  coverImageContent?: File;
   params?: Record<string, any>;
 }
 
@@ -44,7 +44,7 @@ interface UpdateBookPayload {
   bookmarks?: number;
   authors?: string[];
   imageContents?: File[];
-  coverImageContent?: string;
+  coverImageContent?: File;
   params?: Record<string, any>;
 }
 

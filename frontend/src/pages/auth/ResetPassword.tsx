@@ -85,8 +85,6 @@ const ResetPassword = () => {
 
       <form onSubmit={handleSubmit} className='flex flex-col'>
         <FormInput
-          hidden
-          required
           readOnly
           type='email'
           label='Email'
@@ -95,7 +93,7 @@ const ResetPassword = () => {
           inputName='email'
           spellCheck={false}
           autoComplete='username'
-          extraLabelClassNames='mt-[15px]'
+          extraLabelClassNames='mt-[15px] hidden'
         />
 
         <FormInput

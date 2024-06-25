@@ -19,7 +19,7 @@ const Navigation = () => {
 
   return (
     <nav className='row-start-1 row-end-3 p-3 bg-white dark:text-zircon dark:bg-nile-blue-900'>
-      <Link to={HOME} className='font-bold text-xl flex items-center gap-2'>
+      <Link to={HOME} className='font-bold text-xl flex items-center gap-2 w-fit'>
         <MdLocalLibrary className='w-7 h-7 text-current' />
         E-Library
       </Link>
