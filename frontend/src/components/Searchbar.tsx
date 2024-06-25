@@ -1,16 +1,26 @@
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { RiMoonLine, RiSearch2Line, RiSunLine, RiUser3Line } from 'react-icons/ri';
 
 import { PATHS } from 'routes/PathConstants';
-import { useAppSelector } from 'hooks/useRootStorage';
-
-const { PROFILE } = PATHS;
+import { logout } from 'services/apis/userApi/userSlice';
+import { updateUserData } from 'services/userData/userDataSlice';
+import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
 const Searchbar = () => {
+  const { PROFILE, LOGIN } = PATHS;
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [menuOpened, setMenuOpened] = useState<boolean>(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const { profileImageUrl } = useAppSelector(state => state.user);
-  const { isAuthenticated } = useAppSelector(state => state.userData);
+  const { isAuthenticated, prefersDarkMode } = useAppSelector(state => state.userData);
+
+  const signOut = () => {
+    dispatch(logout());
+    navigate(LOGIN);
+  };
 
   return (
     <div className='px-4 flex items-center justify-between gap-5 bg-white dark:bg-nile-blue-900 dark:text-nile-blue-900'>
@@ -24,18 +34,51 @@ const Searchbar = () => {
         />
       </div>
 
-      <button className='w-11 h-11 p-2 bg-zircon rounded-half ml-auto'>
-        <RiMoonLine className='w-full h-full text-current' />
-      </button>
-      <Link
-        to={PROFILE}
-        className={`block w-11 h-11 bg-zircon rounded-half ${isAuthenticated || 'p-2'}`}>
-        {isAuthenticated ? (
-          <img src={profileImageUrl} alt='' />
+      <button
+        className='w-11 h-11 p-2 bg-zircon rounded-half ml-auto'
+        onClick={() => dispatch(updateUserData({ prefersDarkMode: !prefersDarkMode }))}>
+        {prefersDarkMode ? (
+          <RiSunLine className='w-full h-full text-current' />
         ) : (
-          <RiUser3Line className='w-full h-full text-current' />
+          <RiMoonLine className='w-full h-full text-current' />
         )}
-      </Link>
+      </button>
+
+      <div className='relative'>
+        <button
+          id='header-menu-button'
+          aria-expanded={menuOpened}
+          aria-controls='portal-menu'
+          onBlur={() => setMenuOpened(false)}
+          onClick={() => setMenuOpened(!menuOpened)}
+          className='block relative w-11 h-11 bg-zircon rounded-half cursor-pointer'>
+          <img
+            alt=''
+            src={profileImageUrl}
+            className='rounded-half'
+            onLoad={() => setImageLoaded(true)}
+          />
+          {(!isAuthenticated || !imageLoaded) && (
+            <RiUser3Line className='absolute p-2 top-0 left-0 w-full h-full text-current' />
+          )}
+        </button>
+
+        <div
+          role='menu'
+          id='portal-menu'
+          aria-labelledby='header-menu-button'
+          onClick={() => setMenuOpened(false)}
+          className={`text-[14px] z-[5] bg-white overflow-hidden flex flex-col rounded-b w-full max-w-[150px] absolute top-[calc(100%+10px)] right-0 shadow-[0_10px_20px_0_rgba(219,219,219,0.25)] duration-500 ${
+            menuOpened ? 'max-h-[300px]' : 'max-h-0'
+          }`}>
+          <Link role='menuitem' to={PROFILE} className='h-10 grid place-items-center shrink-0'>
+            Profile
+          </Link>
+          <span role='menuitem' className='h-10 shrink-0 cursor-pointer' onClick={signOut}>
+            Logout
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

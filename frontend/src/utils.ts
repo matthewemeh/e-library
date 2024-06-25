@@ -1,3 +1,5 @@
+import { encrypt, decrypt } from 'n-krypta';
+
 export const toggleClass = (element?: HTMLElement | null, ...classes: string[]) => {
   if (element) classes.forEach(className => element.classList.toggle(className));
 };
@@ -97,4 +99,48 @@ export const rearrangeElements = (array: any[], sourceIndex: number, destination
       swapElements(array, i, i - 1);
     }
   }
+};
+
+export const getRndInteger = (min: number, max: number): number => {
+  // returns a random integer from min to (max - 1)
+  return Math.floor(Math.random() * (max - min)) + min;
+};
+
+export const getOtp = (digits: number): string => {
+  let otp = '';
+  for (let i = 0; i < digits; i++) otp += getRndInteger(0, 10).toString();
+  return otp;
+};
+
+export const generateOTP = (n: number): OtpDetails => {
+  const otp: string = getOtp(n);
+  const secret: string = process.env.REACT_APP_OTP_SECRET_KEY!;
+  const ENCRYPTION_CYCLE: number = Number(process.env.REACT_APP_OTP_ENCRYPTION_CYCLE!);
+
+  const encryptedOtp = encrypt(otp, secret, ENCRYPTION_CYCLE);
+  return { otp, encryptedOtp };
+};
+
+export const decryptString = (encryptedString: string): string => {
+  const secret: string = process.env.REACT_APP_OTP_SECRET_KEY!;
+  const ENCRYPTION_CYCLE: number = Number(process.env.REACT_APP_OTP_ENCRYPTION_CYCLE!);
+
+  let decryptedString = encryptedString;
+  for (let i = 0; i < ENCRYPTION_CYCLE; i++) {
+    decryptedString = decrypt(decryptedString, secret);
+  }
+  return decryptedString;
+};
+
+export const validateOTP = (enteredOtp: string, encryptedOtp: string): boolean => {
+  let decryptedString = decryptString(encryptedOtp);
+
+  return enteredOtp === decryptedString;
+};
+
+export const secondsToMMSS = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const secondsLeft = seconds % 60;
+
+  return `${minutes.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
 };

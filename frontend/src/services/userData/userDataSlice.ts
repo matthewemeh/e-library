@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: UserData = {
   booksReadInfo: [],
+  isOtpVerified: false,
   bookmarkedBookIDs: [],
   isAuthenticated: false,
   prefersDarkMode: false,
@@ -14,9 +15,10 @@ export const userDataSlice = createSlice({
   reducers: {
     updateUserData: (state, action: PayloadAction<Partial<UserData>>) => {
       state = Object.assign(state, action.payload);
-    }
+    },
+    resetUserData: () => initialState
   }
 });
 
-export const { updateUserData } = userDataSlice.actions;
+export const { updateUserData, resetUserData } = userDataSlice.actions;
 export default userDataSlice.reducer;

@@ -20,17 +20,18 @@ interface Book {
   updatedAt: string;
   createdAt: string;
   authors: string[];
-  isDeleted: boolean;
   coverImageUrl: string;
   imageContentUrls: string[];
 }
 
 interface BookReadInfo {
   bookID: string;
+  lastOpened: string;
   percentRead: number;
 }
 
 interface UserData {
+  isOtpVerified: boolean;
   isAuthenticated: boolean;
   prefersDarkMode: boolean;
   bookmarkedBookIDs: string[];
@@ -48,5 +49,16 @@ interface PaginatedResponse {
 
 interface BookStore {
   pages: number;
-  books: Book[];
+  allBooks: Book[];
+  paginatedBooks: Book[];
+}
+
+interface OtpDetails {
+  otp: string;
+  encryptedOtp: string;
+}
+
+interface StoredOtpDetails {
+  otp: string;
+  expiresAt: number;
 }

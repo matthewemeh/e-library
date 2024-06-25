@@ -1,17 +1,23 @@
-import { lazy, useMemo } from 'react';
+import { lazy, useEffect, useMemo } from 'react';
 import { createBrowserRouter, RouterProvider, RouteObject } from 'react-router-dom';
 
 import routes from 'routes';
 import Page404 from 'pages/Page404';
 import useAuth from 'hooks/useAuth';
+import authRoutes from 'routes/auth';
 import NavLayout from 'layouts/NavLayout';
+import AuthLayout from 'layouts/AuthLayout';
 import { PATHS } from 'routes/PathConstants';
+import { updateUserData } from 'services/userData/userDataSlice';
+import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
 const Admin = lazy(() => import('pages/Admin'));
 
 const App = () => {
   const { ADMIN } = PATHS;
+  const dispatch = useAppDispatch();
   const isAuthorized: boolean = useAuth();
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const newRoutes = useMemo<RouteObject[]>(() => {
     if (isAuthorized) {
       return [...routes, { path: ADMIN, element: <Admin /> }];
@@ -19,11 +25,32 @@ const App = () => {
     return routes;
   }, [isAuthorized, routes]);
 
+  useEffect(() => {
+    const windowMatchMedia: MediaQueryList = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const isDarkMode: boolean = windowMatchMedia.matches;
+    dispatch(updateUserData({ prefersDarkMode: isDarkMode }));
+
+    windowMatchMedia.addEventListener('change', event => {
+      dispatch(updateUserData({ prefersDarkMode: event.matches }));
+    });
+
+    return () => {
+      windowMatchMedia.removeEventListener('change', event => {
+        dispatch(updateUserData({ prefersDarkMode: event.matches }));
+      });
+    };
+  }, []);
+
   const router = createBrowserRouter([
     {
       element: <NavLayout />,
       errorElement: <Page404 />,
       children: newRoutes
+    },
+    {
+      element: <AuthLayout />,
+      errorElement: <Page404 />,
+      children: authRoutes
     }
   ]);
 

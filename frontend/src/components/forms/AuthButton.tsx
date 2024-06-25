@@ -1,0 +1,53 @@
+import Loading from '../Loading';
+
+interface Props {
+  title: string;
+  hidden?: boolean;
+  tabIndex?: number;
+  disabled?: boolean;
+  isLoading?: boolean;
+  loadingText?: string;
+  onClick?: () => void;
+  extraClassNames?: string;
+  extraStyles?: React.CSSProperties;
+  type: 'button' | 'reset' | 'submit';
+  buttonRef?: React.RefObject<HTMLButtonElement>;
+}
+
+const AuthButton: React.FC<Props> = ({
+  type,
+  title,
+  hidden,
+  onClick,
+  tabIndex,
+  disabled,
+  isLoading,
+  buttonRef,
+  loadingText,
+  extraStyles,
+  extraClassNames
+}) => {
+  return (
+    <button
+      type={type}
+      ref={buttonRef}
+      onClick={onClick}
+      style={extraStyles}
+      disabled={disabled}
+      tabIndex={tabIndex}
+      className={`w-full flex items-center justify-center gap-2 mt-7 font-inter rounded-lg bg-nile-blue-900 text-base font-semibold text-white py-2.5 px-[18px] h-11 border border-nile-blue-900 transition-colors duration-300 shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none hover:text-nile-blue-900 focus:text-nile-blue-900 hover:bg-white focus:bg-white phones:font-bold disabled:bg-[hsl(0,0%,80%)] disabled:text-[hsl(218,11%,45%)] disabled:border-transparent disabled:hover:shadow-none disabled:focus:shadow-none disabled:cursor-default ${
+        hidden && 'hidden'
+      } ${isLoading && '!bg-zircon cursor-default'} ${extraClassNames}`}>
+      {isLoading ? (
+        <div className='flex gap-x-2'>
+          <span>{loadingText}</span>
+          <Loading spinnerClassNames='w-[30px] h-[30px]' />
+        </div>
+      ) : (
+        title
+      )}
+    </button>
+  );
+};
+
+export default AuthButton;

@@ -1,9 +1,9 @@
 interface UserRegisterPayload {
-  role: Role;
+  role?: Role;
   name: string;
   email: string;
   password: string;
-  profileImage: File;
+  profileImage?: File;
 }
 
 interface UserUpdatePayload {
@@ -43,7 +43,6 @@ interface UpdateBookPayload {
   category?: string;
   bookmarks?: number;
   authors?: string[];
-  isDeleted?: boolean;
   imageContents?: File[];
   coverImageContent?: string;
   params?: Record<string, any>;
@@ -57,4 +56,11 @@ interface DeleteBookPayload {
 
 interface GetBooksPayload {
   params?: Record<string, any>;
+}
+
+interface EmailSendPayload {
+  to: string;
+  text?: string;
+  html?: string;
+  subject?: string;
 }

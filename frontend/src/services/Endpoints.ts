@@ -1,9 +1,11 @@
 import { isDevMode } from 'helpers/devDetect';
 
 export default {
+  EMAIL: '/email',
   USERS: '/users',
   BOOKS: '/books',
   LOGIN: '/users/login',
+  EMAIL_SEND: '/email/send',
   REGISTER: '/users/register',
   INCREASE_READS: '/books/increase-reads',
   INCREASE_BOOKMARKS: '/books/increase-bookmarks',
