@@ -19,7 +19,14 @@ router.route('/register').post(upload.any(), async (req, res) => {
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json('This email has already been used');
+      return res.status(400).send('This email has already been used');
+    }
+    const superAdminExists = await User.findOne({ role: roles.SUPER_ADMIN });
+    const isInvalidRole = !Object.values(roles).includes(role);
+    if (isInvalidRole) {
+      return res.status(400).send('Invalid role');
+    } else if (role === roles.SUPER_ADMIN && superAdminExists) {
+      return res.status(400).send('A SUPER ADMIN already exists');
     }
 
     const profileImageFile = req.files.find(({ fieldname }) => fieldname === PROFILE_IMAGE_KEY);
