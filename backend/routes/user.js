@@ -124,8 +124,8 @@ router.route('/login').post((req, res) => {
 });
 
 /* get users */
-router.route('/').get(async (req, res) => {
-  const { userID } = req.body;
+router.route('/fetch/:userID').get(async (req, res) => {
+  const { userID } = req.params;
 
   try {
     const user = await User.findById(userID);

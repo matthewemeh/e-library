@@ -6,9 +6,7 @@ const initialState: BookStore = { paginatedBooks: [], pages: -1, allBooks: [] };
 type PaginatedBooksResponse = PaginatedResponse | Book[];
 type ActionHandler<T> = CaseReducer<BookStore, PayloadAction<T>>;
 
-const refreshAction: ActionHandler<PaginatedBooksResponse> = (state, action) => {
-  const payload: PaginatedBooksResponse = action.payload;
-
+const refreshAction: ActionHandler<PaginatedBooksResponse> = (state, { payload }) => {
   if ('docs' in payload) {
     // indicates paginated response
     return { ...state, paginatedBooks: payload.docs, pages: payload.pages };
@@ -16,8 +14,8 @@ const refreshAction: ActionHandler<PaginatedBooksResponse> = (state, action) => 
   return { ...state, allBooks: payload };
 };
 
-const updateAction: ActionHandler<Book> = (state, action) => {
-  const bookToUpdateID: string = action.payload._id;
+const updateAction: ActionHandler<Book> = (state, { payload }) => {
+  const bookToUpdateID: string = payload._id;
 
   let newState = { ...state };
   const newBooks = [...newState.allBooks];
@@ -32,11 +30,11 @@ const updateAction: ActionHandler<Book> = (state, action) => {
   const paginatedBookToUpdateFound: boolean = paginatedBookToUpdateIndex > -1;
 
   if (paginatedBookToUpdateFound) {
-    newPaginatedBooks[paginatedBookToUpdateIndex] = action.payload;
+    newPaginatedBooks[paginatedBookToUpdateIndex] = payload;
     newState = { ...newState, paginatedBooks: newPaginatedBooks };
   }
   if (newBookToUpdateFound) {
-    newBooks[newBookToUpdateIndex] = action.payload;
+    newBooks[newBookToUpdateIndex] = payload;
     newState = { ...newState, allBooks: newBooks };
   }
 

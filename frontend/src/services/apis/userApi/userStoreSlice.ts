@@ -22,9 +22,7 @@ const initialState: UserStore = {
 type PaginatedUsersResponse = PaginatedResponse | User[];
 type ActionHandler<T> = CaseReducer<UserStore, PayloadAction<T>>;
 
-const refreshAction: ActionHandler<PaginatedUsersResponse> = (state, action) => {
-  const payload: PaginatedUsersResponse = action.payload;
-
+const refreshAction: ActionHandler<PaginatedUsersResponse> = (state, { payload }) => {
   if ('docs' in payload) {
     // indicates paginated response
     return { ...state, paginatedUsers: payload.docs, pages: payload.pages };
@@ -32,10 +30,36 @@ const refreshAction: ActionHandler<PaginatedUsersResponse> = (state, action) => 
   return { ...state, allUsers: payload };
 };
 
-const updateAction: ActionHandler<User> = (state, { payload }) => ({
-  ...state,
-  currentUser: payload
-});
+const updateAction: ActionHandler<User> = (state, { payload }) => {
+  const userToUpdateID: string = payload._id;
+  let newState = { ...state };
+
+  if (payload._id === state.currentUser._id || !state.currentUser._id) {
+    newState.currentUser = payload;
+  }
+
+  const newUsers = [...newState.allUsers];
+  const newPaginatedUsers = [...newState.paginatedUsers];
+
+  const newUserToUpdateIndex: number = newUsers.findIndex(({ _id }) => _id === userToUpdateID);
+  const paginatedUserToUpdateIndex: number = newPaginatedUsers.findIndex(
+    ({ _id }) => _id === userToUpdateID
+  );
+
+  const newUserToUpdateFound: boolean = newUserToUpdateIndex > -1;
+  const paginatedUserToUpdateFound: boolean = paginatedUserToUpdateIndex > -1;
+
+  if (paginatedUserToUpdateFound) {
+    newPaginatedUsers[paginatedUserToUpdateIndex] = payload;
+    newState = { ...newState, paginatedUsers: newPaginatedUsers };
+  }
+  if (newUserToUpdateFound) {
+    newUsers[newUserToUpdateIndex] = payload;
+    newState = { ...newState, allUsers: newUsers };
+  }
+
+  return newState;
+};
 
 export const userStoreSlice = createSlice({
   name: 'userStore',

@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Endpoints from 'services/Endpoints';
 import Constants from '../../../Constants';
 
-const { BASE_URL, LOGIN, REGISTER, USERS } = Endpoints;
+const { BASE_URL, LOGIN, REGISTER, USERS, GET_USERS } = Endpoints;
 
 const { PROFILE_IMAGE_KEY, USER_PAYLOAD_KEY } = Constants;
 
@@ -47,7 +47,11 @@ export const userStoreApi = createApi({
       }
     }),
     getUsers: builder.mutation({
-      query: (body: GetUsersPayload) => ({ body, method: 'GET', url: USERS, params: body.params })
+      query: (body: GetUsersPayload) => ({
+        method: 'GET',
+        params: body.params,
+        url: `${GET_USERS}/${body.userID}`
+      })
     }),
     getUser: builder.mutation({
       query: (body: GetUserPayload) => ({

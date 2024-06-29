@@ -1,6 +1,5 @@
 import { GiBookCover } from 'react-icons/gi';
 import { useContext, useMemo, useState } from 'react';
-import { FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 
 import Book from './Book';
 import Loading from './Loading';
@@ -8,6 +7,7 @@ import SortButton from './SortButton';
 
 import { NavLayoutContext } from 'layouts/NavLayout';
 import { useAppSelector } from 'hooks/useRootStorage';
+import PaginationControls from './PaginationControls';
 
 interface Props {
   paginated?: boolean;
@@ -23,7 +23,7 @@ const BooksPanel: React.FC<Props> = ({
   filterPredicate = () => true
 }) => {
   const [sortQuery, setSortQuery] = useState<SortQuery>();
-  const { page, setPage, MIN_PAGE_INDEX, isLoading } = useContext(NavLayoutContext);
+  const { page, setPage, isLoading } = useContext(NavLayoutContext);
   const { paginatedBooks, pages, allBooks } = useAppSelector(state => state.bookStore);
   const sortedBooks = useMemo<Book[]>(() => {
     const newBooks: Book[] = paginated ? [...paginatedBooks] : [...allBooks];
@@ -57,22 +57,7 @@ const BooksPanel: React.FC<Props> = ({
             </div>
           )}
           {pages > 0 && paginated && (
-            <div className='ml-auto flex items-center gap-7'>
-              <button
-                disabled={page === MIN_PAGE_INDEX}
-                onClick={() => setPage!(prev => prev - 1)}
-                className='flex items-center justify-between gap-3 bg-nile-blue-900 text-zircon rounded-3xl py-2 px-4 ease-in-out duration-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zircon dark:text-nile-blue-900'>
-                <FaArrowLeft />
-                Previous
-              </button>
-              <button
-                disabled={page === pages}
-                onClick={() => setPage!(prev => prev + 1)}
-                className='flex items-center justify-between gap-3 bg-nile-blue-900 text-zircon rounded-3xl py-2 px-4 ease-in-out duration-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zircon dark:text-nile-blue-900'>
-                Next
-                <FaArrowRight />
-              </button>
-            </div>
+            <PaginationControls page={page!} pages={pages} setPage={setPage!} />
           )}
         </header>
       )}

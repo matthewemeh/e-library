@@ -5,6 +5,7 @@ export default {
   USERS: '/users',
   BOOKS: '/books',
   LOGIN: '/users/login',
+  GET_USERS: '/users/fetch',
   EMAIL_SEND: '/email/send',
   REGISTER: '/users/register',
   INCREASE_READS: '/books/increase-reads',
