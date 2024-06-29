@@ -6,11 +6,22 @@ const { Schema, model } = mongoose;
 
 const roles = { ADMIN: 'ADMIN', SUPER_ADMIN: 'SUPER_ADMIN', USER: 'USER' };
 
+const BookRead = new Schema(
+  {
+    bookID: { type: String, required: true },
+    percentRead: { type: Number, default: 0 },
+    lastOpened: { type: String, default: new Date().toISOString() }
+  },
+  { _id: false, minimize: false, timestamps: false, versionKey: false }
+);
+
 const UserSchema = new Schema(
   {
     role: { type: String, default: roles.USER },
+    booksRead: { type: [BookRead], default: [] },
     profileImageUrl: { type: String, default: '' },
     emailValidated: { type: Boolean, default: false },
+    bookmarkedBookIDs: { type: [String], default: [] },
     password: { type: String, trim: true, required: [true, 'is required'] },
     name: { type: String, required: [true, 'is required'], minlength: 2, trim: true },
     email: {

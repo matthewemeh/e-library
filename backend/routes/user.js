@@ -22,7 +22,7 @@ router.route('/register').post(upload.any(), async (req, res) => {
       return res.status(400).send('This email has already been used');
     }
     const superAdminExists = await User.findOne({ role: roles.SUPER_ADMIN });
-    const isInvalidRole = !Object.values(roles).includes(role);
+    const isInvalidRole = role !== undefined && !Object.values(roles).includes(role);
     if (isInvalidRole) {
       return res.status(400).send('Invalid role');
     } else if (role === roles.SUPER_ADMIN && superAdminExists) {
@@ -53,7 +53,8 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
       req.files.find(({ fieldname }) => fieldname === USER_PAYLOAD_KEY).buffer
     );
     const { id } = req.params;
-    const { name, password, role, emailValidated, userID } = userPayload;
+    const { name, password, role, emailValidated, userID, bookRead, bookmarkedBookID } =
+      userPayload;
 
     const user = await User.findById(userID);
     const isOwner = user && user._id == id;
@@ -73,6 +74,26 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
     if (isOwner) {
       if (name) userToBeUpdated.name = name;
       if (password) userToBeUpdated.password = password;
+      if (bookmarkedBookID) {
+        const { bookmarkedBookIDs } = userToBeUpdated;
+        if (bookmarkedBookIDs.includes(bookmarkedBookID)) {
+          userToBeUpdated.bookmarkedBookIDs = bookmarkedBookIDs.filter(
+            id => id !== bookmarkedBookID
+          );
+        } else {
+          userToBeUpdated.bookmarkedBookIDs.push(bookmarkedBookID);
+        }
+      }
+      if (bookRead) {
+        const bookReadToBeUpdatedIndex = userToBeUpdated.booksRead.findIndex(
+          ({ bookID }) => bookID === bookRead.bookID
+        );
+        if (bookReadToBeUpdatedIndex > -1) {
+          userToBeUpdated.booksRead[bookReadToBeUpdatedIndex] = bookRead;
+        } else {
+          userToBeUpdated.booksRead.push(bookRead);
+        }
+      }
 
       const profileImageFile = req.files.find(({ fieldname }) => fieldname === PROFILE_IMAGE_KEY);
       const profileImage = profileImageFile?.buffer;

@@ -45,7 +45,7 @@ const BooksPanel: React.FC<Props> = ({
   }, [paginatedBooks, sortQuery, paginated, filterPredicate]);
 
   return (
-    <section className='bg-white p-8 rounded-lg dark:dark:bg-nile-blue-900'>
+    <section className='bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
       {sortedBooks.length > 0 && (
         <header className='flex mb-7 items-center justify-between gap-3'>
           {showFilters && (

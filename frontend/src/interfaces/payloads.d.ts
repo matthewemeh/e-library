@@ -15,6 +15,8 @@ interface UserUpdatePayload {
   password?: string;
   profileImage?: File;
   emailValidated?: boolean;
+  bookmarkedBookID?: string;
+  bookRead?: { bookID: string; lastOpened?: string; percentRead?: number };
 }
 
 interface UserLoginPayload {
@@ -52,6 +54,21 @@ interface DeleteBookPayload {
   _id: string;
   userID: string;
   params?: Record<string, any>;
+}
+
+interface GetUsersPayload {
+  userID: string;
+  params?: Record<string, any>;
+}
+
+interface GetUserPayload {
+  _id: string;
+  params?: Record<string, any>;
+}
+
+interface DeleteUserPayload {
+  _id: string;
+  userID: string;
 }
 
 interface GetBooksPayload {

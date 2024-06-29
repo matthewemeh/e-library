@@ -6,10 +6,10 @@ import FormInput from 'components/forms/FormInput';
 import AuthButton from 'components/forms/AuthButton';
 
 import { PATHS } from 'routes/PathConstants';
-import { logout } from 'services/apis/userApi/userSlice';
+import { logout } from 'services/apis/userApi/userStoreSlice';
 import { resetUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
-import { useUpdateUserMutation } from 'services/apis/userApi/userApi';
+import { useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
 
 import { showAlert } from 'utils';
 import RiUser3Line from 'assets/ri-user-3-line.svg';
@@ -23,8 +23,10 @@ const Profile = () => {
   const profileImageRef = useRef<HTMLInputElement>(null);
   const profileImagePreviewRef = useRef<HTMLImageElement>(null);
   const [profileImageChanged, setProfileImageChanged] = useState(false);
-  const { _id, name, email, profileImageUrl } = useAppSelector(state => state.user);
   const [updateUser, { error, isError, isLoading, isSuccess }] = useUpdateUserMutation();
+  const { _id, name, email, profileImageUrl } = useAppSelector(
+    state => state.userStore.currentUser
+  );
 
   const handleUpdateUser = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
@@ -75,7 +77,7 @@ const Profile = () => {
   return (
     <PageLayout>
       <section
-        className='bg-white p-8 rounded-lg dark:dark:bg-nile-blue-900 flex flex-col items-center'
+        className='bg-white p-8 rounded-lg dark:bg-nile-blue-900 flex flex-col items-center'
         onSubmit={handleUpdateUser}>
         <label htmlFor='profile-image' className='cursor-pointer'>
           <img
@@ -135,7 +137,7 @@ const Profile = () => {
             title='Update'
             disabled={isLoading}
             isLoading={isLoading}
-            extraClassNames='dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon dark:hover:border-zircon'
+            extraClassNames='dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon'
           />
 
           <AuthButton

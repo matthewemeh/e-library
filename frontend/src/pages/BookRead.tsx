@@ -1,9 +1,127 @@
+import { useEffect, useMemo } from 'react';
+import { FaUserAlt } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
+import { MdOutlineDateRange } from 'react-icons/md';
+import { RiBookmarkFill, RiBookmarkLine, RiFolderWarningLine } from 'react-icons/ri';
+
+import { getDateProps } from 'utils';
+import { useAppSelector } from 'hooks/useRootStorage';
+import { useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
+import {
+  useIncreaseReadsMutation,
+  useIncreaseBookmarksMutation
+} from 'services/apis/bookApi/bookStoreApi';
+
+import BookImage from 'components/BookImage';
 
 const BookRead = () => {
   const { id } = useParams();
+  const { allBooks } = useAppSelector(state => state.bookStore);
+  const {
+    booksRead,
+    _id: userID,
+    bookmarkedBookIDs
+  } = useAppSelector(state => state.userStore.currentUser);
+  const [increaseReads, { isError: isReadsError, error: readsError, isSuccess: isReadsSuccess }] =
+    useIncreaseReadsMutation();
+  const [updateUser, { error: updateError, isError: isUpdateError, isLoading: isUpdateLoading }] =
+    useUpdateUserMutation();
 
-  return <div>BookRead {id}</div>;
+  const [
+    increaseBookmarks,
+    { isError: isBookmarkError, error: bookmarkError, isLoading: isBookmarkLoading }
+  ] = useIncreaseBookmarksMutation();
+
+  const { title, content, authors, coverImageUrl, imageContentUrls, updatedAt } = allBooks.find(
+    ({ _id }) => _id === id
+  )!;
+  const { longMonthName, monthDate, year } = getDateProps(updatedAt);
+  const authorText = authors.length > 1 ? authors[0].concat(' et al') : authors[0];
+
+  const isBookmarked = useMemo<boolean>(() => bookmarkedBookIDs.includes(id!), [bookmarkedBookIDs]);
+
+  useEffect(() => {
+    const bookAlreadyRead = booksRead.find(({ bookID }) => bookID === id);
+    if (id) {
+      if (bookAlreadyRead) {
+        updateUser({
+          userID,
+          _id: userID,
+          bookRead: { ...bookAlreadyRead, lastOpened: new Date().toISOString() }
+        });
+      } else {
+        increaseReads({ _id: id });
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (id && isReadsSuccess) {
+      updateUser({ userID, _id: userID, bookRead: { bookID: id } });
+    }
+  }, [isReadsSuccess]);
+
+  useEffect(() => {
+    if (isReadsError && readsError && 'status' in readsError) {
+      console.error(readsError);
+    }
+  }, [readsError, isReadsError]);
+
+  useEffect(() => {
+    if (isBookmarkError && bookmarkError && 'status' in bookmarkError) {
+      console.error(bookmarkError);
+    }
+  }, [bookmarkError, isBookmarkError]);
+
+  useEffect(() => {
+    if (isUpdateError && updateError && 'status' in updateError) {
+      console.error(updateError);
+    }
+  }, [updateError, isUpdateError]);
+
+  return (
+    <article className='bg-nile-blue-900 px-6 py-4 rounded-lg text-zircon flex flex-col items-center justify-center mx-auto'>
+      <h1 className='text-[42px] leading-[52px] -tracking-[0.462px] font-bold'>{title}</h1>
+      <div className='grid grid-cols-2 gap-y-1 gap-x-4 mt-4 mb-5'>
+        <p className='flex items-center justify-center gap-3'>
+          <FaUserAlt className='text-current' /> {authors.length > 0 ? authorText : 'None'}
+        </p>
+        <p className='flex items-center justify-center gap-3'>
+          <MdOutlineDateRange className='text-current text-[20px]' /> {longMonthName} {monthDate}
+          ,&nbsp;{year}
+        </p>
+        <button
+          disabled={isBookmarkLoading}
+          onClick={() => {
+            if (id) {
+              if (!bookmarkedBookIDs.includes(id)) increaseBookmarks({ _id: id });
+              updateUser({ userID, _id: userID, bookmarkedBookID: id });
+            }
+          }}
+          className='col-start-1 col-end-3 text-center flex items-center justify-center gap-2 disabled:opacity-50 underline'>
+          {isBookmarked ? <RiBookmarkFill /> : <RiBookmarkLine />}
+          Bookmark this book
+        </button>
+      </div>
+      {content && (
+        <p className='text-xl tracking-normal first-letter:font-bold first-letter:text-7xl'>
+          {content}
+        </p>
+      )}
+      {imageContentUrls.length > 0 && (
+        <div className='mb-5 flex flex-col items-center gap-5 flex-wrap'>
+          {imageContentUrls.slice(0, 5).map(imageUrl => (
+            <BookImage imageUrl={imageUrl} extraClassNames=' w-[75%]' />
+          ))}
+        </div>
+      )}
+      {!content && imageContentUrls.length === 0 && (
+        <p className='text-xl mt-3 flex items-center justify-center gap-2'>
+          <RiFolderWarningLine className='text-[25px]' /> No content is available for this book
+        </p>
+      )}
+    </article>
+  );
 };
 
 export default BookRead;

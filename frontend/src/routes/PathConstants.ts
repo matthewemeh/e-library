@@ -9,6 +9,8 @@ export const PATHS = {
   SETTINGS: '/settings',
   BOOKMARKS: '/bookmarks',
   REGISTER: '/auth/register',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_BOOKS: '/admin/books',
   BOOK_READ: '/books/:id/read',
   VERIFY_OTP: '/auth/verify-otp',
   RESET_PASSWORD: '/auth/reset-password',

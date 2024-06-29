@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { RiMoonLine, RiSearch2Line, RiSunLine, RiUser3Line } from 'react-icons/ri';
 
 import { PATHS } from 'routes/PathConstants';
-import { logout } from 'services/apis/userApi/userSlice';
+import { logout } from 'services/apis/userApi/userStoreSlice';
 import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
@@ -14,7 +14,7 @@ const Searchbar = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
-  const { profileImageUrl } = useAppSelector(state => state.user);
+  const { profileImageUrl } = useAppSelector(state => state.userStore.currentUser);
   const { isAuthenticated, prefersDarkMode } = useAppSelector(state => state.userData);
 
   const signOut = () => {
@@ -68,7 +68,7 @@ const Searchbar = () => {
           id='portal-menu'
           aria-labelledby='header-menu-button'
           onClick={() => setMenuOpened(false)}
-          className={`text-[14px] z-[5] bg-white overflow-hidden flex flex-col rounded-b w-full max-w-[150px] absolute top-[calc(100%+10px)] right-0 shadow-[0_10px_20px_0_rgba(219,219,219,0.25)] duration-500 ${
+          className={`text-[14px] text-center z-[5] bg-zircon overflow-hidden flex flex-col rounded-b w-[120px] absolute top-[calc(100%+10px)] right-0 shadow-[0_10px_20px_0_rgba(219,219,219,0.25)] duration-500 dark:bg-nile-blue-900 dark:shadow-lg dark:text-zircon ${
             menuOpened ? 'max-h-[300px]' : 'max-h-0'
           }`}>
           <Link role='menuitem' to={PROFILE} className='h-10 grid place-items-center shrink-0'>

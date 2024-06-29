@@ -13,7 +13,7 @@ import axios from 'services/axios';
 import Endpoints from 'services/Endpoints';
 import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
-import { useUpdateUserMutation } from 'services/apis/userApi/userApi';
+import { useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
 
 const ResetPassword = () => {
   const { USERS } = Endpoints;
@@ -21,13 +21,13 @@ const ResetPassword = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { email } = useAppSelector(state => state.user);
-  const [passwordSubmitted, setPasswordSubmitted] = useState(false);
-  const { isOtpVerified, isAuthenticated } = useAppSelector(state => state.userData);
-  const [updateUser, { error, isError, isLoading, isSuccess }] = useUpdateUserMutation();
-
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const [passwordSubmitted, setPasswordSubmitted] = useState(false);
+
+  const { email } = useAppSelector(state => state.userStore.currentUser);
+  const { isOtpVerified, isAuthenticated } = useAppSelector(state => state.userData);
+  const [updateUser, { error, isError, isLoading, isSuccess }] = useUpdateUserMutation();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();

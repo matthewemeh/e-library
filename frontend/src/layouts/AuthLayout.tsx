@@ -4,9 +4,9 @@ import { createContext, Suspense, useCallback, useEffect, useMemo } from 'react'
 import { showAlert } from 'utils';
 import Loading from 'components/Loading';
 import { PATHS } from 'routes/PathConstants';
-import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
-import { useUpdateUserMutation } from 'services/apis/userApi/userApi';
 import { updateUserData } from 'services/userData/userDataSlice';
+import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
+import { useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
 
 export const AuthContext = createContext<Partial<AuthContext>>({});
 
@@ -16,8 +16,8 @@ const AuthLayout = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { _id, name } = useAppSelector(state => state.user);
   const { isAuthenticated } = useAppSelector(state => state.userData);
+  const { _id, name } = useAppSelector(state => state.userStore.currentUser);
   const mailPretext = useMemo<string>(() => {
     if (_id) {
       return `Dear ${name},\nWelcome to E-Library! To complete your registration, please enter the OTP down below to verify your email.\nIf you did not create an account with us, please disregard this email. Your privacy is important to us.`;

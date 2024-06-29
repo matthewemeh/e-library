@@ -7,8 +7,8 @@ const { BASE_URL, LOGIN, REGISTER, USERS } = Endpoints;
 const { PROFILE_IMAGE_KEY, USER_PAYLOAD_KEY } = Constants;
 
 // create the createApi
-export const userApi = createApi({
-  reducerPath: 'userApi',
+export const userStoreApi = createApi({
+  reducerPath: 'userStoreApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: builder => ({
     register: builder.mutation({
@@ -45,10 +45,34 @@ export const userApi = createApi({
 
         return { body: formData, method: 'PATCH', url: `${USERS}/${body._id}` };
       }
+    }),
+    getUsers: builder.mutation({
+      query: (body: GetUsersPayload) => ({ body, method: 'GET', url: USERS, params: body.params })
+    }),
+    getUser: builder.mutation({
+      query: (body: GetUserPayload) => ({
+        method: 'GET',
+        params: body.params,
+        url: `${USERS}/${body._id}`
+      })
+    }),
+    deleteUser: builder.mutation({
+      query: (body: DeleteUserPayload) => ({
+        body,
+        method: 'DELETE',
+        url: `${USERS}/${body._id}`
+      })
     })
   })
 });
 
-export const { useLoginMutation, useRegisterMutation, useUpdateUserMutation } = userApi;
+export const {
+  useLoginMutation,
+  useGetUserMutation,
+  useGetUsersMutation,
+  useRegisterMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation
+} = userStoreApi;
 
-export default userApi;
+export default userStoreApi;

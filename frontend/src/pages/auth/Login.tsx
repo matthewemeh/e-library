@@ -3,14 +3,14 @@ import { MdLocalLibrary } from 'react-icons/md';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { PATHS } from 'routes/PathConstants';
-import { useLoginMutation } from 'services/apis/userApi/userApi';
+import { useLoginMutation } from 'services/apis/userApi/userStoreApi';
 import { resetUserData, updateUserData } from 'services/userData/userDataSlice';
 
 import { showAlert } from 'utils';
 import FormInput from 'components/forms/FormInput';
 import AuthButton from 'components/forms/AuthButton';
 import { useAppDispatch } from 'hooks/useRootStorage';
-import { logout } from 'services/apis/userApi/userSlice';
+import { logout } from 'services/apis/userApi/userStoreSlice';
 
 const Login = () => {
   const { HOME, FORGOT_PASSWORD, REGISTER } = PATHS;

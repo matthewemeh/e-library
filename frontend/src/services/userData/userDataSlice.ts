@@ -1,12 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: UserData = {
-  booksReadInfo: [],
   isOtpVerified: false,
-  bookmarkedBookIDs: [],
   isAuthenticated: false,
-  prefersDarkMode: false,
-  previouslyBookmarkedBookIDs: []
+  prefersDarkMode: false
 };
 
 export const userDataSlice = createSlice({

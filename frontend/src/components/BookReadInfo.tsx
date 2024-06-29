@@ -27,7 +27,7 @@ const BookReadInfo: React.FC<Props> = ({
     <button
       disabled={isDeleted}
       onClick={() => navigate(`/books/${bookID}/read`)}
-      className='grid grid-cols-[25%_1fr_20%] gap-4 items-center justify-between px-6 py-1.5 border-2 border-transparent rounded-md shadow-md duration-300 ease-in-out bg-white text-nile-blue-900 dark:bg-nile-blue-950 dark:text-zircon hover:border-nile-blue-900 disabled:opacity-50 hover:dark:border-zircon disabled:cursor-not-allowed disabled:border-transparent'>
+      className='grid grid-cols-[25%_1fr_20%] gap-4 items-center justify-between px-6 py-1.5 border-2 border-transparent rounded-md shadow-md duration-300 ease-in-out hover:border-current bg-white text-nile-blue-900 dark:bg-nile-blue-950 dark:text-zircon disabled:opacity-50 disabled:cursor-not-allowed disabled:border-transparent'>
       <span className='flex items-center gap-4 relative'>
         {imageLoaded || <GiBookCover className='w-[60px] h-[70px] absolute z-[1] top-0 left-0' />}
         <img
@@ -40,7 +40,7 @@ const BookReadInfo: React.FC<Props> = ({
       </span>
 
       <span className='flex items-center gap-3'>
-        {pages} pages
+        {pages > 0 && `${pages} pages`}
         <Progress percentage={percentRead} />
       </span>
 

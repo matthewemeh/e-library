@@ -2,12 +2,12 @@ import { useRef } from 'react';
 import { MdLocalLibrary } from 'react-icons/md';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { PATHS } from 'routes/PathConstants';
-
 import FormInput from 'components/forms/FormInput';
 import AuthButton from 'components/forms/AuthButton';
+
+import { PATHS } from 'routes/PathConstants';
 import { useAppDispatch } from 'hooks/useRootStorage';
-import { updateUser } from 'services/apis/userApi/userSlice';
+import { updateUser } from 'services/apis/userApi/userStoreSlice';
 
 const ForgotPassword = () => {
   const { LOGIN, VERIFY_OTP } = PATHS;

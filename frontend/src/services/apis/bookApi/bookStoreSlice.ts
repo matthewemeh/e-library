@@ -19,8 +19,9 @@ const refreshAction: ActionHandler<PaginatedBooksResponse> = (state, action) => 
 const updateAction: ActionHandler<Book> = (state, action) => {
   const bookToUpdateID: string = action.payload._id;
 
-  const newBooks = [...state.allBooks];
-  const newPaginatedBooks = [...state.paginatedBooks];
+  let newState = { ...state };
+  const newBooks = [...newState.allBooks];
+  const newPaginatedBooks = [...newState.paginatedBooks];
 
   const newBookToUpdateIndex: number = newBooks.findIndex(({ _id }) => _id === bookToUpdateID);
   const paginatedBookToUpdateIndex: number = newPaginatedBooks.findIndex(
@@ -30,12 +31,16 @@ const updateAction: ActionHandler<Book> = (state, action) => {
   const newBookToUpdateFound: boolean = newBookToUpdateIndex > -1;
   const paginatedBookToUpdateFound: boolean = paginatedBookToUpdateIndex > -1;
 
-  if (paginatedBookToUpdateFound && newBookToUpdateFound) {
+  if (paginatedBookToUpdateFound) {
     newPaginatedBooks[paginatedBookToUpdateIndex] = action.payload;
-    newBooks[newBookToUpdateIndex] = action.payload;
-    return { ...state, paginatedBooks: newPaginatedBooks, allBooks: newBooks };
+    newState = { ...newState, paginatedBooks: newPaginatedBooks };
   }
-  return state;
+  if (newBookToUpdateFound) {
+    newBooks[newBookToUpdateIndex] = action.payload;
+    newState = { ...newState, allBooks: newBooks };
+  }
+
+  return newState;
 };
 
 export const bookStoreSlice = createSlice({

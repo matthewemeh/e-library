@@ -11,16 +11,24 @@ import { PATHS } from 'routes/PathConstants';
 import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
-const Admin = lazy(() => import('pages/Admin'));
+const Admin = lazy(() => import('pages/admin/Admin'));
+const ManageBooks = lazy(() => import('pages/admin/ManageBooks'));
+const ManageUsers = lazy(() => import('pages/admin/ManageUsers'));
 
 const App = () => {
-  const { ADMIN } = PATHS;
+  const { ADMIN, ADMIN_BOOKS, ADMIN_USERS } = PATHS;
+
   const dispatch = useAppDispatch();
   const isAuthorized: boolean = useAuth();
   const { prefersDarkMode } = useAppSelector(state => state.userData);
   const newRoutes = useMemo<RouteObject[]>(() => {
     if (isAuthorized) {
-      return [...routes, { path: ADMIN, element: <Admin /> }];
+      return [
+        ...routes,
+        { path: ADMIN, element: <Admin /> },
+        { path: ADMIN_BOOKS, element: <ManageBooks /> },
+        { path: ADMIN_USERS, element: <ManageUsers /> }
+      ];
     }
     return routes;
   }, [isAuthorized, routes]);

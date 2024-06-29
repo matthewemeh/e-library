@@ -10,7 +10,7 @@ import { PATHS } from 'routes/PathConstants';
 import { useAppSelector } from 'hooks/useRootStorage';
 import { useGetBooksMutation } from 'services/apis/bookApi/bookStoreApi';
 
-export const NavLayoutContext = createContext<Partial<NavLayoutContext>>({});
+export const NavLayoutContext = createContext<Partial<PaginationContext>>({});
 
 const NavLayout = () => {
   const MIN_PAGE_INDEX = 1;
@@ -18,9 +18,10 @@ const NavLayout = () => {
   const { LOGIN, VERIFY_OTP } = PATHS;
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(MIN_PAGE_INDEX);
-  const { emailValidated } = useAppSelector(state => state.user);
+
   const { isAuthenticated } = useAppSelector(state => state.userData);
   const [getBooks, { error, isError, isLoading }] = useGetBooksMutation();
+  const { emailValidated } = useAppSelector(state => state.userStore.currentUser);
 
   useEffect(() => setPage(MIN_PAGE_INDEX), [limit]);
 

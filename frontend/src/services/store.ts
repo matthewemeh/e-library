@@ -5,26 +5,26 @@ import { configureStore } from '@reduxjs/toolkit';
 import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
 import emailApi from './apis/emailApi';
-import userApi from './apis/userApi/userApi';
-import userSlice from './apis/userApi/userSlice';
 import userDataSlice from './userData/userDataSlice';
+import userStoreApi from './apis/userApi/userStoreApi';
 import bookStoreApi from './apis/bookApi/bookStoreApi';
+import userStoreSlice from './apis/userApi/userStoreSlice';
 import bookStoreSlice from './apis/bookApi/bookStoreSlice';
 
 /* reducers */
 const reducer = combineReducers({
-  user: userSlice,
   userData: userDataSlice,
+  userStore: userStoreSlice,
   bookStore: bookStoreSlice,
-  [userApi.reducerPath]: userApi.reducer,
   [emailApi.reducerPath]: emailApi.reducer,
+  [userStoreApi.reducerPath]: userStoreApi.reducer,
   [bookStoreApi.reducerPath]: bookStoreApi.reducer
 });
 
 const persistConfig = {
   storage,
   key: 'root',
-  blackList: [bookStoreApi.reducerPath, userApi.reducerPath, emailApi.reducerPath]
+  blackList: [bookStoreApi.reducerPath, userStoreApi.reducerPath, emailApi.reducerPath]
 };
 
 /* persist our store */
@@ -38,7 +38,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
       }
-    }).concat(bookStoreApi.middleware, userApi.middleware, emailApi.middleware)
+    }).concat(bookStoreApi.middleware, userStoreApi.middleware, emailApi.middleware)
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

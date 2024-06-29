@@ -3,14 +3,14 @@ import BookReadInfo from './BookReadInfo';
 import { useAppSelector } from 'hooks/useRootStorage';
 
 const ReadBooks = () => {
-  const { allBooks }: BookStore = useAppSelector(state => state.bookStore);
-  const { booksReadInfo }: UserData = useAppSelector(state => state.userData);
+  const { allBooks } = useAppSelector(state => state.bookStore);
+  const { booksRead } = useAppSelector(state => state.userStore.currentUser);
 
-  return booksReadInfo.length > 0 ? (
-    <section className='mb-7 flex flex-col gap-2 bg-white p-8 rounded-lg dark:dark:bg-nile-blue-900'>
+  return booksRead.length > 0 ? (
+    <section className='mb-7 flex flex-col gap-2 bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
       <h2 className='font-bold text-2xl mb-5'>Continue your reading</h2>
 
-      {booksReadInfo
+      {[...booksRead]
         .sort((a, b) => new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime())
         .map(bookReadInfo => {
           const { bookID }: BookReadInfo = bookReadInfo;

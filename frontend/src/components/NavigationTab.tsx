@@ -26,7 +26,7 @@ const NavigationTab: React.FC<Props> = ({ to, icon, text }) => {
     <Link
       to={to}
       ref={linkRef}
-      className={`${NAV_LINK} flex text-[17px] font-medium items-center px-3 py-2.5 gap-4 border border-transparent rounded-md transition-colors ease-in-out duration-300 hover:border-nile-blue-900 dark:hover:border-zircon`}>
+      className={`${NAV_LINK} flex text-[17px] font-medium items-center px-3 py-2.5 gap-4 border border-transparent rounded-md transition-colors ease-in-out duration-300 hover:border-current`}>
       {icon}
       {text}
     </Link>

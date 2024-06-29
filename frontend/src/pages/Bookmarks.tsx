@@ -9,7 +9,7 @@ import { useAppSelector } from 'hooks/useRootStorage';
 
 const Bookmarks = () => {
   const { HOME } = PATHS;
-  const { bookmarkedBookIDs } = useAppSelector(state => state.userData);
+  const { bookmarkedBookIDs } = useAppSelector(state => state.userStore.currentUser);
   const emptyBookmarksComponent = useMemo<JSX.Element>(() => {
     return (
       <div className='flex flex-col gap-5 items-center justify-center text-center'>

@@ -21,10 +21,11 @@ const VerifyOTP = () => {
   const [enteredOtp, setEnteredOtp] = useState<string>('');
   const [otpDetails, setOtpDetails] = useState<OtpDetails>();
   const [counter, setCounter] = useState<number>(THREE_MINUTES);
-  const { isAuthenticated } = useAppSelector(state => state.userData);
-  const { email, emailValidated } = useAppSelector(state => state.user);
   const generatedOtp: string | undefined = useMemo(() => otpDetails?.otp, [otpDetails]);
   const encryptedOtp: string | undefined = useMemo(() => otpDetails?.encryptedOtp, [otpDetails]);
+
+  const { isAuthenticated } = useAppSelector(state => state.userData);
+  const { email, emailValidated } = useAppSelector(state => state.userStore.currentUser);
 
   const setStoredOtp = () => {
     const newGeneratedOtp: OtpDetails = generateOTP(NUMBER_OF_DIGITS);

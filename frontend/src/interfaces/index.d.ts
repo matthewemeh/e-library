@@ -7,6 +7,8 @@ interface User {
   updatedAt: string;
   emailValidated: boolean;
   profileImageUrl: string;
+  booksRead: BookReadInfo[];
+  bookmarkedBookIDs: string[];
 }
 
 interface Book {
@@ -34,9 +36,6 @@ interface UserData {
   isOtpVerified: boolean;
   isAuthenticated: boolean;
   prefersDarkMode: boolean;
-  bookmarkedBookIDs: string[];
-  booksReadInfo: BookReadInfo[];
-  previouslyBookmarkedBookIDs: string[];
 }
 
 interface PaginatedResponse {
@@ -53,6 +52,13 @@ interface BookStore {
   paginatedBooks: Book[];
 }
 
+interface UserStore {
+  pages: number;
+  allUsers: User[];
+  currentUser: User;
+  paginatedUsers: User[];
+}
+
 interface OtpDetails {
   otp: string;
   encryptedOtp: string;
@@ -61,4 +67,32 @@ interface OtpDetails {
 interface StoredOtpDetails {
   otp: string;
   expiresAt: number;
+}
+
+interface DayDetail {
+  name: DayLongName;
+  shortName: DayShortName;
+}
+
+interface MonthDetail {
+  name: MonthLongName;
+  shortName: MonthShortName;
+}
+
+interface DateProps {
+  year: number;
+  month: number;
+  hour12: number;
+  hour24: number;
+  minutes: number;
+  seconds: number;
+  dayOfWeek: number;
+  monthDate: number;
+  milliseconds: number;
+  am_or_pm: 'am' | 'pm';
+  longDayOfWeek: DayLongName;
+  shortDayOfWeek: DayShortName;
+  longMonthName: MonthLongName;
+  shortMonthName: MonthShortName;
+  millisecondsFromInception: number;
 }

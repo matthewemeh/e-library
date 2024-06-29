@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { PATHS } from 'routes/PathConstants';
-import { useRegisterMutation } from 'services/apis/userApi/userApi';
+import { useRegisterMutation } from 'services/apis/userApi/userStoreApi';
 
 import FormInput from 'components/forms/FormInput';
 import AuthButton from 'components/forms/AuthButton';

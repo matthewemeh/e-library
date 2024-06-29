@@ -1,4 +1,4 @@
-interface NavLayoutContext {
+interface PaginationContext {
   page: number;
   limit: number;
   isLoading: boolean;
