@@ -9,13 +9,15 @@ import { PATHS } from 'routes/PathConstants';
 import { logout } from 'services/apis/userApi/userStoreSlice';
 import { resetUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
-import { useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
+import { useDeleteUserMutation, useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
 
+import Constants from 'Constants';
 import { showAlert } from 'utils';
 import RiUser3Line from 'assets/ri-user-3-line.svg';
 
 const Profile = () => {
-  const { FORGOT_PASSWORD } = PATHS;
+  const { FORGOT_PASSWORD, LOGIN } = PATHS;
+  const { ACCEPTED_IMAGE_TYPES } = Constants;
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -23,7 +25,24 @@ const Profile = () => {
   const profileImageRef = useRef<HTMLInputElement>(null);
   const profileImagePreviewRef = useRef<HTMLImageElement>(null);
   const [profileImageChanged, setProfileImageChanged] = useState(false);
-  const [updateUser, { error, isError, isLoading, isSuccess }] = useUpdateUserMutation();
+  const [
+    updateUser,
+    {
+      error: updateError,
+      isError: isUpdateError,
+      isLoading: isUpdateLoading,
+      isSuccess: isUpdateSuccess
+    }
+  ] = useUpdateUserMutation();
+  const [
+    deleteUser,
+    {
+      error: deleteError,
+      isError: isDeleteError,
+      isLoading: isDeleteLoading,
+      isSuccess: isDeleteSuccess
+    }
+  ] = useDeleteUserMutation();
   const { _id, name, email, profileImageUrl } = useAppSelector(
     state => state.userStore.currentUser
   );
@@ -35,7 +54,7 @@ const Profile = () => {
 
     const userPayload: UserUpdatePayload = { _id, userID: _id };
 
-    if (newName && name !== newName) userPayload.name = newName;
+    if (name !== newName) userPayload.name = newName;
     if (profileImageChanged) userPayload.profileImage = profileImage;
 
     if (Object.keys(userPayload).length === 2) {
@@ -45,7 +64,7 @@ const Profile = () => {
     updateUser(userPayload);
   };
 
-  const updatePreviewImage = (imageFile: File | null | undefined) => {
+  const updatePreviewImage = (imageFile?: File | null) => {
     const imageTag: HTMLImageElement = profileImagePreviewRef.current!;
 
     if (imageFile) {
@@ -55,30 +74,58 @@ const Profile = () => {
         const result = `${reader.result ?? ''}`;
         imageTag.src = result;
       });
+      setProfileImageChanged(true);
     } else {
       imageTag.src = profileImageUrl || RiUser3Line;
+      setProfileImageChanged(false);
     }
   };
 
+  const handleResetPassword = () => {
+    dispatch(logout());
+    dispatch(resetUserData());
+    navigate(FORGOT_PASSWORD);
+  };
+
+  const handleDeleteUser = () => {
+    const isDeleteConfirmed: boolean = window.confirm(
+      'Are you sure you want to delete your account?'
+    );
+    if (isDeleteConfirmed) deleteUser({ _id, userID: _id });
+  };
+
   useEffect(() => {
-    if (isSuccess) {
+    if (isUpdateSuccess) {
       setProfileImageChanged(false);
       showAlert({ msg: 'Updated details successfully' });
     }
-  }, [isSuccess]);
+  }, [isUpdateSuccess]);
 
   useEffect(() => {
-    if (isError && error && 'status' in error) {
-      showAlert({ msg: `${error.data ?? ''}` });
-      console.error(error);
+    if (isDeleteSuccess) {
+      dispatch(logout());
+      dispatch(resetUserData());
+      navigate(LOGIN);
     }
-  }, [error, isError]);
+  }, [isDeleteSuccess]);
+
+  useEffect(() => {
+    if (isUpdateError && updateError && 'status' in updateError) {
+      showAlert({ msg: `${updateError.data ?? 'An error occured while updating your profile'}` });
+      console.error(updateError);
+    }
+  }, [updateError, isUpdateError]);
+
+  useEffect(() => {
+    if (isDeleteError && deleteError && 'status' in deleteError) {
+      showAlert({ msg: `${deleteError.data ?? 'An error occured while deleting your profile'}` });
+      console.error(deleteError);
+    }
+  }, [deleteError, isDeleteError]);
 
   return (
     <PageLayout>
-      <section
-        className='bg-white p-8 rounded-lg dark:bg-nile-blue-900 flex flex-col items-center'
-        onSubmit={handleUpdateUser}>
+      <section className='bg-white p-8 rounded-lg dark:bg-nile-blue-900 flex flex-col items-center'>
         <label htmlFor='profile-image' className='cursor-pointer'>
           <img
             alt=''
@@ -104,6 +151,7 @@ const Profile = () => {
           />
 
           <FormInput
+            required
             type='text'
             label='Full Name'
             inputRef={nameRef}
@@ -123,11 +171,10 @@ const Profile = () => {
             onChange={e => {
               const imageFile: File | undefined = e.target.files?.[0];
               updatePreviewImage(imageFile);
-              !profileImageChanged && setProfileImageChanged(true);
             }}
             inputName='profile-image'
-            accept='.png, .jpg, .webp'
             inputRef={profileImageRef}
+            accept={ACCEPTED_IMAGE_TYPES}
             extraLabelClassNames='mt-[15px]'
             extraInputClassNames='dark:bg-nile-blue-950'
           />
@@ -135,20 +182,25 @@ const Profile = () => {
           <AuthButton
             type='submit'
             title='Update'
-            disabled={isLoading}
-            isLoading={isLoading}
+            disabled={isUpdateLoading}
+            isLoading={isUpdateLoading}
             extraClassNames='dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon'
           />
 
           <AuthButton
             type='button'
             title='Reset Password?'
-            onClick={() => {
-              dispatch(logout());
-              dispatch(resetUserData());
-              navigate(FORGOT_PASSWORD);
-            }}
-            extraClassNames='dark:!bg-transparent dark:!text-zircon dark:!border-transparent h-0'
+            onClick={handleResetPassword}
+            extraClassNames='!bg-transparent !text-nile-blue-900 dark:!text-zircon !border-transparent h-0 shadow-none w-max mx-auto'
+          />
+
+          <AuthButton
+            type='button'
+            title='Delete Account'
+            onClick={handleDeleteUser}
+            disabled={isDeleteLoading}
+            isLoading={isDeleteLoading}
+            extraClassNames='!bg-red-600 !text-white dark:!border-transparent h-0'
           />
         </form>
       </section>

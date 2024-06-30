@@ -3,7 +3,7 @@ const router = require('express').Router();
 const Book = require('../models/book.model');
 const storage = require('../firebase-config');
 const { User, roles } = require('../models/user.model');
-const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
+const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 
 const upload = multer();
 
@@ -13,15 +13,14 @@ const { USER_PAYLOAD_KEY, COVER_IMAGE_KEY, IMAGE_CONTENTS_KEY } = require('../Co
 /* get books */
 router.route('/').get(async (req, res) => {
   try {
-    const category = req.query['category'] ?? 'all';
     const page = Number(req.query['page']);
     const limit = Number(req.query['limit']);
     let result;
 
     if (isNaN(page) || isNaN(limit)) {
-      result = await Book.find({ category });
+      result = await Book.find();
     } else {
-      result = await Book.paginate({ category }, { page, limit });
+      result = await Book.paginate({}, { page, limit });
     }
 
     res.status(200).json(result);
@@ -32,12 +31,11 @@ router.route('/').get(async (req, res) => {
 
 /* create book */
 router.route('/').post(upload.any(), async (req, res) => {
-  console.log(req.files);
   try {
     const userPayload = JSON.parse(
       req.files.find(({ fieldname }) => fieldname === USER_PAYLOAD_KEY).buffer
     );
-    const { authors, content, pages, title, userID } = userPayload;
+    const { authors, content, pages, title, userID, category } = userPayload;
     const page = Number(req.query['page']);
     const limit = Number(req.query['limit']);
 
@@ -47,13 +45,13 @@ router.route('/').post(upload.any(), async (req, res) => {
       return res.status(401).send('You are not authorized to carry out this operation');
     }
 
-    const imageContentFiles = req.files.find(({ fieldname }) => fieldname === IMAGE_CONTENTS_KEY);
-    const imageContents = imageContentFiles?.buffer;
-    const newBook = new Book({ authors, content, pages, title });
-    const imageContentsLength = imageContents?.length ?? 0;
-    for (let i = 0; i < imageContentsLength; i++) {
+    const imageContents = req.files.filter(({ fieldname }) =>
+      fieldname.includes(IMAGE_CONTENTS_KEY)
+    );
+    const newBook = new Book({ authors, content, pages, title, category });
+    for (let i = 0; i < imageContents.Length; i++) {
       const imageRef = ref(storage, `books/${newBook._id}/${newBook._id}_${i + 1}`);
-      const snapshot = await uploadBytes(imageRef, imageContents[i]);
+      const snapshot = await uploadBytes(imageRef, imageContents[i].buffer);
       const url = await getDownloadURL(snapshot.ref);
       newBook.imageContentUrls.push(url);
     }
@@ -92,7 +90,7 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
     );
     const { reads, pages, title, authors, content, category, bookmarks } = userPayload;
 
-    const { userID } = req.body;
+    const { userID } = userPayload;
     const user = await User.findById(userID);
     const isUser = !user || user.role === roles.USER;
     if (isUser) {
@@ -108,17 +106,15 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
     if (category) book.category = category;
     if (bookmarks) book.bookmarks = bookmarks;
 
-    const imageContentFiles = req.files.find(({ fieldname }) => fieldname === IMAGE_CONTENTS_KEY);
-    const imageContents = imageContentFiles?.buffer;
-    if (imageContents) {
-      /* delete book images folder with id */
-      const folderRef = ref(storage, `books/${id}`);
-      await deleteObject(folderRef);
+    const imageContents = req.files.filter(({ fieldname }) =>
+      fieldname.includes(IMAGE_CONTENTS_KEY)
+    );
+    if (imageContents.length > 0) {
       book.imageContentUrls = [];
 
       for (let i = 0; i < imageContents.length; i++) {
         const imageRef = ref(storage, `books/${book._id}/${book._id}_${i + 1}`);
-        const snapshot = await uploadBytes(imageRef, imageContents[i]);
+        const snapshot = await uploadBytes(imageRef, imageContents[i].buffer);
         const url = await getDownloadURL(snapshot.ref);
         book.imageContentUrls.push(url);
       }
@@ -206,9 +202,6 @@ router.route('/:id').delete(async (req, res) => {
     }
 
     await Book.findByIdAndDelete(id);
-    /* delete book images folder with id */
-    const folderRef = ref(storage, `books/${id}`);
-    await deleteObject(folderRef);
 
     let result;
     if (isNaN(page) || isNaN(limit)) {

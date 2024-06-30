@@ -3,6 +3,8 @@ import { HiLockClosed } from 'react-icons/hi';
 import { AiOutlineMail } from 'react-icons/ai';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 
+import { formatInputText } from 'utils';
+
 interface Props {
   label: string;
   value?: string;
@@ -10,6 +12,7 @@ interface Props {
   hidden?: boolean;
   inputID?: string;
   tabIndex?: number;
+  multiple?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   inputName?: string;
@@ -25,6 +28,7 @@ interface Props {
   extraLabelStyles?: React.CSSProperties;
   extraInputStyles?: React.CSSProperties;
   inputRef?: React.RefObject<HTMLInputElement>;
+  formatRule?: Omit<FormatInputTextProps, 'text'>;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
 }
@@ -41,10 +45,12 @@ const FormInput: React.FC<Props> = ({
   readOnly,
   disabled,
   inputRef,
+  multiple,
   onChange,
   inputMode,
   autoFocus,
   inputName,
+  formatRule,
   spellCheck,
   placeholder,
   autoComplete,
@@ -54,11 +60,11 @@ const FormInput: React.FC<Props> = ({
   extraInputClassNames,
   extraLabelClassNames
 }) => {
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const selfRef = useRef<HTMLInputElement>(null);
   const isEmailField: boolean = inputName === 'email';
   const isPasswordField: boolean = type === 'password';
+  const ref: React.RefObject<HTMLInputElement> = inputRef ?? selfRef;
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const ref: React.RefObject<HTMLInputElement> = inputRef ?? passwordRef;
 
   return (
     <div
@@ -86,9 +92,16 @@ const FormInput: React.FC<Props> = ({
           value={value}
           accept={accept}
           name={inputName}
+          multiple={multiple}
           disabled={disabled}
           readOnly={readOnly}
-          onChange={onChange}
+          onChange={e => {
+            let oldText: string = e.target.value;
+            if (formatRule) {
+              e.target.value = formatInputText({ text: oldText, ...formatRule });
+            }
+            onChange?.(e);
+          }}
           tabIndex={tabIndex}
           required={required}
           autoFocus={autoFocus}

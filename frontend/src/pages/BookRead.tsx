@@ -80,7 +80,7 @@ const BookRead = () => {
   }, [updateError, isUpdateError]);
 
   return (
-    <article className='bg-nile-blue-900 px-6 py-4 rounded-lg text-zircon flex flex-col items-center justify-center mx-auto'>
+    <article className='bg-white px-6 py-4 rounded-lg flex flex-col items-center justify-center mx-auto dark:bg-nile-blue-900'>
       <h1 className='text-[42px] leading-[52px] -tracking-[0.462px] font-bold'>{title}</h1>
       <div className='grid grid-cols-2 gap-y-1 gap-x-4 mt-4 mb-5'>
         <p className='flex items-center justify-center gap-3'>
@@ -104,14 +104,14 @@ const BookRead = () => {
         </button>
       </div>
       {content && (
-        <p className='text-xl tracking-normal first-letter:font-bold first-letter:text-7xl'>
+        <p className='mb-10 text-left break-all w-full mr-auto text-xl tracking-normal first-letter:font-bold first-letter:text-7xl'>
           {content}
         </p>
       )}
       {imageContentUrls.length > 0 && (
         <div className='mb-5 flex flex-col items-center gap-5 flex-wrap'>
-          {imageContentUrls.slice(0, 5).map(imageUrl => (
-            <BookImage imageUrl={imageUrl} extraClassNames=' w-[75%]' />
+          {imageContentUrls.map((imageUrl, index) => (
+            <BookImage key={index} imageUrl={imageUrl} extraClassNames='!w-3/4 !h-fit' />
           ))}
         </div>
       )}

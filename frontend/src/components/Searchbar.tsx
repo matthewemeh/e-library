@@ -55,8 +55,8 @@ const Searchbar = () => {
           <img
             alt=''
             src={profileImageUrl}
-            className='rounded-half'
             onLoad={() => setImageLoaded(true)}
+            className={`rounded-half ${imageLoaded || 'opacity-0 invisible'}`}
           />
           {(!isAuthenticated || !imageLoaded) && (
             <RiUser3Line className='absolute p-2 top-0 left-0 w-full h-full text-current' />

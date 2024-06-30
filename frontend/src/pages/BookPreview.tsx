@@ -31,7 +31,7 @@ const BookPreview = () => {
   const { longMonthName, monthDate, year } = getDateProps(updatedAt);
 
   return (
-    <PageLayout extraClassNames='pl-[1.5%] pr-1.5 grid grid-cols-[60%_40%]'>
+    <PageLayout extraClassNames='bg-white rounded-md p-8 grid grid-cols-[60%_40%] dark:bg-nile-blue-900'>
       <div>
         <h1 className='text-[56px] leading-[64px] font-semibold pr-2'>{title}</h1>
         <p className='flex items-center gap-3 mt-4'>
@@ -66,11 +66,16 @@ const BookPreview = () => {
           Read
         </Link>
 
-        {content && <p>{content.slice(1000)}...</p>}
+        {content && (
+          <p className='mb-4'>
+            {content.slice(0, 1000)}
+            {content.length > 1000 && '...'}
+          </p>
+        )}
         {imageContentUrls.length > 0 && (
           <div className='mr-5 flex gap-3 h-[120px] flex-wrap'>
-            {imageContentUrls.slice(0, 5).map(imageUrl => (
-              <BookImage imageUrl={imageUrl} />
+            {imageContentUrls.slice(0, 5).map((imageUrl, index) => (
+              <BookImage key={index} imageUrl={imageUrl} />
             ))}
           </div>
         )}
@@ -89,9 +94,9 @@ const BookPreview = () => {
         <img
           alt=''
           loading='lazy'
-          className='h-full'
           src={coverImageUrl}
           onLoad={() => setImageLoaded(true)}
+          className={`h-full ${imageLoaded || 'opacity-0 invisible'}`}
         />
       </div>
     </PageLayout>

@@ -6,10 +6,9 @@ import Loading from 'components/Loading';
 import PageLayout from 'layouts/PageLayout';
 import PaginationControls from 'components/PaginationControls';
 
+import { showAlert } from 'utils';
 import { useAppSelector } from 'hooks/useRootStorage';
 import { useGetUsersMutation } from 'services/apis/userApi/userStoreApi';
-
-import { showAlert } from 'utils';
 
 const ManageUsers = () => {
   const MIN_PAGE_INDEX = 1;
@@ -36,7 +35,7 @@ const ManageUsers = () => {
       setPage(MIN_PAGE_INDEX);
       console.log(error);
       showAlert({
-        msg: 'Could not fetch latest books. Please check your internet connection and try again'
+        msg: 'Could not fetch users. Please check your internet connection and try again'
       });
     }
   }, [error, isError]);
@@ -57,13 +56,9 @@ const ManageUsers = () => {
 
         {isLoading ? (
           <Loading />
+        ) : users.length > 0 ? (
+          users.map(user => <UserTab key={user._id} user={user} />)
         ) : (
-          users
-            .filter(({ role }) => role !== 'SUPER_ADMIN')
-            .map(user => <UserTab key={user._id} user={user} />)
-        )}
-
-        {users.length === 0 && (
           <div className='flex flex-col gap-5 items-center justify-center text-center'>
             <FaUserSlash className='w-[100px] h-[100px]' />
             <span className='text-lg font-medium'>No users to manage.</span>

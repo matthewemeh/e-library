@@ -114,6 +114,35 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
   }
 });
 
+/* delete specific user's profile picture */
+router.route('/delete-profile-image/:id').patch(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userID } = req.body;
+
+    const user = await User.findById(userID);
+    const isOwner = user && user._id == id;
+    if (!isOwner) {
+      return res.status(401).send('You are not authorized to carry out this operation');
+    }
+
+    const userToBeUpdated = await User.findById(id);
+    if (!userToBeUpdated) {
+      return res.status(500).send('User does not exist');
+    }
+
+    /* delete user image */
+    const fileRef = ref(storage, `users/${userToBeUpdated._id}`);
+    await deleteObject(fileRef);
+    userToBeUpdated.profileImageUrl = '';
+
+    const updatedUser = await userToBeUpdated.save();
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
+
 /* login */
 router.route('/login').post((req, res) => {
   const { email, password } = req.body;

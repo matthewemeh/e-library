@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Endpoints from 'services/Endpoints';
-import Constants from '../../../Constants';
+import Constants from 'Constants';
 
-const { BASE_URL, LOGIN, REGISTER, USERS, GET_USERS } = Endpoints;
+const { BASE_URL, LOGIN, REGISTER, USERS, GET_USERS, DELETE_PROFILE_IMAGE } = Endpoints;
 
 const { PROFILE_IMAGE_KEY, USER_PAYLOAD_KEY } = Constants;
 
@@ -66,6 +66,13 @@ export const userStoreApi = createApi({
         method: 'DELETE',
         url: `${USERS}/${body._id}`
       })
+    }),
+    deleteProfileImage: builder.mutation({
+      query: (body: DeleteProfileImagePayload) => ({
+        body,
+        method: 'PATCH',
+        url: `${DELETE_PROFILE_IMAGE}/${body._id}`
+      })
     })
   })
 });
@@ -76,7 +83,8 @@ export const {
   useGetUsersMutation,
   useRegisterMutation,
   useUpdateUserMutation,
-  useDeleteUserMutation
+  useDeleteUserMutation,
+  useDeleteProfileImageMutation
 } = userStoreApi;
 
 export default userStoreApi;

@@ -21,8 +21,8 @@ const BookImage: React.FC<Props> = ({ extraClassNames, imageUrl }) => {
         alt=''
         loading='lazy'
         src={imageUrl}
-        className='h-full'
         onLoad={() => setImageLoaded(true)}
+        className={`w-full h-full ${imageLoaded || 'opacity-0 invisible'}`}
       />
     </div>
   );

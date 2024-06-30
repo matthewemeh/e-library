@@ -12,6 +12,8 @@ export const PATHS = {
   ADMIN_USERS: '/admin/users',
   ADMIN_BOOKS: '/admin/books',
   BOOK_READ: '/books/:id/read',
+  NEW_BOOK: '/admin/books/new',
+  EDIT_BOOK: '/admin/books/:id',
   VERIFY_OTP: '/auth/verify-otp',
   RESET_PASSWORD: '/auth/reset-password',
   FORGOT_PASSWORD: '/auth/forgot-password'

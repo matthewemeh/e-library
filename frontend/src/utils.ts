@@ -14,10 +14,10 @@ export const removeClass = (element?: HTMLElement | null, ...classes: string[]) 
 
 export const showAlert = ({
   msg,
+  bgColor,
+  textColor,
   zIndex = '0',
-  duration = 3000,
-  textColor = '#fff',
-  bgColor = '#263a53'
+  duration = 3000
 }: AlertProps) => {
   const alertDiv: HTMLDivElement = document.createElement('div');
   alertDiv.id = 'alert';
@@ -28,22 +28,27 @@ export const showAlert = ({
     'w-max',
     'mb-8',
     'left-1/2',
+    'shadow-lg',
+    'text-white',
     'rounded-md',
     'text-[1rem]',
     'ease-in-out',
     'text-center',
     'max-w-[80vw]',
     'duration-500',
+    'dark:bg-zircon',
     'transition-all',
     '-translate-x-1/2',
-    'tracking-[0.04em]'
+    'bg-nile-blue-900',
+    'tracking-[0.04em]',
+    'dark:text-nile-blue-900'
   );
   alertDiv.style.bottom = '-150px';
   document.body.appendChild(alertDiv);
 
   setTimeout(() => {
-    alertDiv.style.background = bgColor;
-    alertDiv.style.color = textColor;
+    if (bgColor) alertDiv.style.background = bgColor;
+    if (textColor) alertDiv.style.color = textColor;
     alertDiv.innerHTML = msg;
     alertDiv.style.bottom = '0px';
 
@@ -254,4 +259,25 @@ export const minifyViews = (views: number): string => {
   } else {
     return views.toLocaleString('en');
   }
+};
+
+export const checkArrayEquality = (array1: any[], array2: any[]): boolean => {
+  let arraysAreSameLength: boolean = array1.length === array2.length;
+
+  if (!arraysAreSameLength) {
+    return false;
+  }
+
+  for (let i = 0; i < array1.length; i++) {
+    if (!array2.includes(array1[i])) {
+      return false;
+    }
+  }
+  for (let j = 0; j < array2.length; j++) {
+    if (!array1.includes(array2[j])) {
+      return false;
+    }
+  }
+
+  return true;
 };

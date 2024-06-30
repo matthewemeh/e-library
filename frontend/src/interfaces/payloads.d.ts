@@ -29,10 +29,11 @@ interface AddBookPayload {
   pages?: number;
   userID: string;
   content?: string;
+  category?: string;
   authors?: string[];
-  imageContents?: File[];
   coverImageContent?: File;
   params?: Record<string, any>;
+  imageContents?: FileList | null;
 }
 
 interface UpdateBookPayload {
@@ -45,9 +46,9 @@ interface UpdateBookPayload {
   category?: string;
   bookmarks?: number;
   authors?: string[];
-  imageContents?: File[];
   coverImageContent?: File;
   params?: Record<string, any>;
+  imageContents?: FileList | null;
 }
 
 interface DeleteBookPayload {
@@ -67,6 +68,11 @@ interface GetUserPayload {
 }
 
 interface DeleteUserPayload {
+  _id: string;
+  userID: string;
+}
+
+interface DeleteProfileImagePayload {
   _id: string;
   userID: string;
 }

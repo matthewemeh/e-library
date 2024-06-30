@@ -80,8 +80,9 @@ export const userStoreSlice = createSlice({
     // these are backend routes(endpoints) which when fufilled, return payloads that updates User object globally
     builder.addMatcher(userStoreApi.endpoints.login.matchFulfilled, updateAction);
     builder.addMatcher(userStoreApi.endpoints.register.matchFulfilled, updateAction);
-    builder.addMatcher(userStoreApi.endpoints.updateUser.matchFulfilled, updateAction);
     builder.addMatcher(userStoreApi.endpoints.getUsers.matchFulfilled, refreshAction);
+    builder.addMatcher(userStoreApi.endpoints.updateUser.matchFulfilled, updateAction);
+    builder.addMatcher(userStoreApi.endpoints.deleteProfileImage.matchFulfilled, updateAction);
   }
 });
 

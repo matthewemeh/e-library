@@ -12,11 +12,13 @@ import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
 const Admin = lazy(() => import('pages/admin/Admin'));
+const AddBook = lazy(() => import('pages/admin/AddBook'));
+const EditBook = lazy(() => import('pages/admin/EditBook'));
 const ManageBooks = lazy(() => import('pages/admin/ManageBooks'));
 const ManageUsers = lazy(() => import('pages/admin/ManageUsers'));
 
 const App = () => {
-  const { ADMIN, ADMIN_BOOKS, ADMIN_USERS } = PATHS;
+  const { ADMIN, ADMIN_BOOKS, ADMIN_USERS, EDIT_BOOK, NEW_BOOK } = PATHS;
 
   const dispatch = useAppDispatch();
   const isAuthorized: boolean = useAuth();
@@ -26,6 +28,8 @@ const App = () => {
       return [
         ...routes,
         { path: ADMIN, element: <Admin /> },
+        { path: NEW_BOOK, element: <AddBook /> },
+        { path: EDIT_BOOK, element: <EditBook /> },
         { path: ADMIN_BOOKS, element: <ManageBooks /> },
         { path: ADMIN_USERS, element: <ManageUsers /> }
       ];

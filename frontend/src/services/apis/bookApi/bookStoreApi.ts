@@ -23,8 +23,13 @@ export const bookStoreApi = createApi({
 
         const formData = new FormData();
         formData.append(USER_PAYLOAD_KEY, documentBlob);
-        formData.append(IMAGE_CONTENTS_KEY, imageContents as unknown as Blob);
         formData.append(COVER_IMAGE_KEY, coverImageContent as Blob);
+        if (imageContents) {
+          for (let i = 0; i < imageContents.length; i++) {
+            const file: File = imageContents[i];
+            formData.append(`${IMAGE_CONTENTS_KEY}-${i}`, file);
+          }
+        }
 
         return { url: BOOKS, body: formData, method: 'POST', params };
       }
@@ -41,8 +46,13 @@ export const bookStoreApi = createApi({
 
         const formData = new FormData();
         formData.append(USER_PAYLOAD_KEY, documentBlob);
-        formData.append(IMAGE_CONTENTS_KEY, imageContents as unknown as Blob);
         formData.append(COVER_IMAGE_KEY, coverImageContent as Blob);
+        if (imageContents) {
+          for (let i = 0; i < imageContents.length; i++) {
+            const file: File = imageContents[i];
+            formData.append(`${IMAGE_CONTENTS_KEY}-${i}`, file);
+          }
+        }
 
         return { body: formData, method: 'PATCH', params, url: `${BOOKS}/${body._id}` };
       }

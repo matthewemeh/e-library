@@ -45,7 +45,7 @@ const UserTab: React.FC<Props> = ({ user }) => {
           loading='lazy'
           src={profileImageUrl}
           onLoad={() => setImageLoaded(true)}
-          className='w-full h-full rounded-half'
+          className={`w-full h-full rounded-half ${imageLoaded || 'opacity-0 invisible'}`}
         />
         {imageLoaded || (
           <RiUser3Line className='absolute p-2 top-0 left-0 w-full h-full text-current' />

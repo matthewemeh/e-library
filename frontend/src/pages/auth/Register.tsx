@@ -8,10 +8,12 @@ import FormInput from 'components/forms/FormInput';
 import AuthButton from 'components/forms/AuthButton';
 import { addClass, removeClass, showAlert } from 'utils';
 
+import Constants from 'Constants';
 import RiUser3Line from 'assets/ri-user-3-line.svg';
 
 const Register = () => {
   const { LOGIN, VERIFY_OTP } = PATHS;
+  const { ACCEPTED_IMAGE_TYPES } = Constants;
 
   const navigate = useNavigate();
   const nameRef = useRef<HTMLInputElement>(null);
@@ -32,7 +34,7 @@ const Register = () => {
     register({ email, password, name, profileImage });
   };
 
-  const updatePreviewImage = (imageFile: File | null | undefined) => {
+  const updatePreviewImage = (imageFile?: File | null) => {
     const imageTag: HTMLImageElement = profileImagePreviewRef.current!;
 
     if (imageFile) {
@@ -117,8 +119,8 @@ const Register = () => {
             updatePreviewImage(imageFile);
           }}
           inputName='profile-image'
-          accept='.png, .jpg, .webp'
           inputRef={profileImageRef}
+          accept={ACCEPTED_IMAGE_TYPES}
           extraLabelClassNames='mt-[15px]'
         />
 
