@@ -1,3 +1,4 @@
+import { MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
@@ -9,7 +10,11 @@ import { PATHS } from 'routes/PathConstants';
 import { logout } from 'services/apis/userApi/userStoreSlice';
 import { resetUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
-import { useDeleteUserMutation, useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
+import {
+  useDeleteUserMutation,
+  useUpdateUserMutation,
+  useDeleteProfileImageMutation
+} from 'services/apis/userApi/userStoreApi';
 
 import Constants from 'Constants';
 import { showAlert } from 'utils';
@@ -25,6 +30,15 @@ const Profile = () => {
   const profileImageRef = useRef<HTMLInputElement>(null);
   const profileImagePreviewRef = useRef<HTMLImageElement>(null);
   const [profileImageChanged, setProfileImageChanged] = useState(false);
+  const [
+    deleteProfileImage,
+    {
+      error: profileImageError,
+      isError: isProfileImagError,
+      isLoading: isProfileImageLoading,
+      isSuccess: isProfileImageSuccess
+    }
+  ] = useDeleteProfileImageMutation();
   const [
     updateUser,
     {
@@ -94,12 +108,28 @@ const Profile = () => {
     if (isDeleteConfirmed) deleteUser({ _id, userID: _id });
   };
 
+  const handleDeleteUserImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const isDeleteImageConfirmed: boolean = window.confirm(
+      'Are you sure you want to delete your profile picture?'
+    );
+    if (isDeleteImageConfirmed) deleteProfileImage({ _id, userID: _id });
+    e.stopPropagation();
+  };
+
   useEffect(() => {
     if (isUpdateSuccess) {
       setProfileImageChanged(false);
+      profileImageRef.current!.value = '';
       showAlert({ msg: 'Updated details successfully' });
     }
   }, [isUpdateSuccess]);
+
+  useEffect(() => {
+    if (isProfileImageSuccess) {
+      showAlert({ msg: 'Profile picture deleted successfully' });
+      profileImageRef.current!.value = '';
+    }
+  }, [isProfileImageSuccess]);
 
   useEffect(() => {
     if (isDeleteSuccess) {
@@ -123,16 +153,33 @@ const Profile = () => {
     }
   }, [deleteError, isDeleteError]);
 
+  useEffect(() => {
+    if (isProfileImagError && profileImageError && 'status' in profileImageError) {
+      showAlert({
+        msg: `${profileImageError.data ?? 'An error occured while deleting your profile'}`
+      });
+      console.error(profileImageError);
+    }
+  }, [profileImageError, isProfileImagError]);
+
   return (
     <PageLayout>
       <section className='bg-white p-8 rounded-lg dark:bg-nile-blue-900 flex flex-col items-center'>
-        <label htmlFor='profile-image' className='cursor-pointer'>
+        <label htmlFor='profile-image' className='relative cursor-pointer'>
           <img
             alt=''
             ref={profileImagePreviewRef}
             src={profileImageUrl || RiUser3Line}
             className='w-[100px] h-[100px] text-current rounded-half bg-zircon border-2 border-nile-blue-900 dark:border-zircon'
           />
+          <button
+            onClick={handleDeleteUserImage}
+            disabled={isProfileImageLoading}
+            className={`text-nile-blue-900 absolute bottom-[4%] right-[4%] bg-zircon rounded-full p-1 ${
+              profileImageUrl ? '' : 'opacity-0 invisible'
+            }`}>
+            <MdDelete />
+          </button>
         </label>
         <h1 className='text-2xl font-semibold mt-4'>Update your details</h1>
 
