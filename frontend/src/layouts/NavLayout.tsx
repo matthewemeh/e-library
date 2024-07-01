@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Suspense, useEffect, useRef, useState, createContext } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState, createContext } from 'react';
 
 import Loading from 'components/Loading';
 import Searchbar from 'components/Searchbar';
@@ -18,9 +18,11 @@ const NavLayout = () => {
   const { LOGIN, VERIFY_OTP } = PATHS;
   const [limit, setLimit] = useState<number>(10);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [transparent, setTransparent] = useState(true);
   const [page, setPage] = useState<number>(MIN_PAGE_INDEX);
 
   const { isAuthenticated } = useAppSelector(state => state.userData);
+  const { paginatedBooks } = useAppSelector(state => state.bookStore);
   const [getBooks, { error, isError, isLoading }] = useGetBooksMutation();
   const { emailValidated } = useAppSelector(state => state.userStore.currentUser);
 
@@ -32,6 +34,26 @@ const NavLayout = () => {
 
   useEffect(() => {
     getBooks({}); // updates `allBooks` in state
+  }, []);
+
+  useEffect(() => {
+    if (paginatedBooks.length === 0 && page > 1) {
+      setPage(prev => prev - 1);
+    }
+  }, [page, paginatedBooks]);
+
+  const watchContentScroll = useCallback(() => {
+    const scrollYPos = contentRef.current!.scrollTop;
+    if (scrollYPos >= 10) setTransparent(false);
+    else if (scrollYPos < 10) setTransparent(true);
+  }, [transparent]);
+
+  useEffect(() => {
+    contentRef.current!.addEventListener('scroll', watchContentScroll);
+
+    return () => {
+      contentRef.current!.removeEventListener('scroll', watchContentScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -54,7 +76,7 @@ const NavLayout = () => {
       value={{ page, setPage, limit, setLimit, MIN_PAGE_INDEX, isLoading, contentRef }}>
       <main className='h-screen grid grid-cols-[15%_85%] grid-rows-[12%_88%]'>
         <Navigation />
-        <Searchbar />
+        <Searchbar extraClassNames={`${transparent || 'z-[1] shadow-[5px_4px_5px_0px_#000]'}`} />
         <div ref={contentRef} className='overflow-y-auto p-4'>
           <Suspense fallback={<Loading />}>
             <Outlet />

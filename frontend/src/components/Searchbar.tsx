@@ -7,7 +7,11 @@ import { logout } from 'services/apis/userApi/userStoreSlice';
 import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
-const Searchbar = () => {
+interface Props {
+  extraClassNames?: string;
+}
+
+const Searchbar: React.FC<Props> = ({ extraClassNames }) => {
   const { PROFILE, LOGIN } = PATHS;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -23,7 +27,8 @@ const Searchbar = () => {
   };
 
   return (
-    <div className='px-4 flex items-center justify-between gap-5 bg-white dark:bg-nile-blue-900 dark:text-nile-blue-900'>
+    <div
+      className={`px-4 flex items-center justify-between gap-5 bg-white dark:bg-nile-blue-900 dark:text-nile-blue-900 ${extraClassNames}`}>
       <div className='w-1/2 flex gap-2.5 items-center p-2.5 rounded-lg bg-zircon'>
         <RiSearch2Line className='text-current' />
         <input

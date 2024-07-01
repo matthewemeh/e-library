@@ -31,6 +31,7 @@ export const showAlert = ({
     'z-[9999]',
     'shadow-lg',
     'text-white',
+    'font-inter',
     'rounded-md',
     'text-[1rem]',
     'ease-in-out',

@@ -4,10 +4,10 @@ import { useContext, useMemo, useState } from 'react';
 import Book from './Book';
 import Loading from './Loading';
 import SortButton from './SortButton';
+import PaginationControls from './PaginationControls';
 
 import { NavLayoutContext } from 'layouts/NavLayout';
 import { useAppSelector } from 'hooks/useRootStorage';
-import PaginationControls from './PaginationControls';
 
 interface Props {
   paginated?: boolean;

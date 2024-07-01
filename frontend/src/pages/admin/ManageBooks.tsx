@@ -17,7 +17,7 @@ const ManageBooks = () => {
   const MIN_PAGE_INDEX = 1;
   const { NEW_BOOK } = PATHS;
 
-  const { paginatedBooks, pages } = useAppSelector(state => state.bookStore);
+  const { allBooks, paginatedBooks, pages } = useAppSelector(state => state.bookStore);
 
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(MIN_PAGE_INDEX);
@@ -43,6 +43,12 @@ const ManageBooks = () => {
     }
   }, [error, isError]);
 
+  useEffect(() => {
+    if (paginatedBooks.length === 0 && page > 1) {
+      setPage(prev => prev - 1);
+    }
+  }, [page, paginatedBooks]);
+
   return (
     <PageLayout>
       <div className='bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
@@ -54,9 +60,7 @@ const ManageBooks = () => {
             Add a new Book <IoMdAddCircle />
           </Link>
         </h1>
-        {paginatedBooks.length > 0 && (
-          <PaginationControls page={page} pages={pages} setPage={setPage} />
-        )}
+        {allBooks.length > 0 && <PaginationControls page={page} pages={pages} setPage={setPage} />}
 
         <div
           className={`gap-x-3 gap-y-4 ${
@@ -66,7 +70,7 @@ const ManageBooks = () => {
           }`}>
           {isLoading ? (
             <Loading />
-          ) : paginatedBooks.length > 0 ? (
+          ) : allBooks.length > 0 ? (
             paginatedBooks.map(book => <Book isAdminMode key={book._id} book={book} />)
           ) : (
             <div className='flex flex-col gap-5 items-center justify-center text-center'>
