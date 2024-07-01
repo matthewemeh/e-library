@@ -26,7 +26,11 @@ const BooksPanel: React.FC<Props> = ({
   const { paginatedBooks, pages, allBooks } = useAppSelector(state => state.bookStore);
   const { page, setPage, isLoading, limit, search, setSearch } = useContext(NavLayoutContext);
 
-  useEffect(() => setSearch!(''), []);
+  useEffect(() => {
+    return () => {
+      setSearch!('');
+    };
+  }, []);
 
   const sortedBooks = useMemo<Book[]>(() => {
     const newBooks: Book[] =
