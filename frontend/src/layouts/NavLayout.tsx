@@ -1,5 +1,5 @@
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Suspense, useEffect, useState, createContext } from 'react';
+import { Suspense, useEffect, useRef, useState, createContext } from 'react';
 
 import Loading from 'components/Loading';
 import Searchbar from 'components/Searchbar';
@@ -10,13 +10,14 @@ import { PATHS } from 'routes/PathConstants';
 import { useAppSelector } from 'hooks/useRootStorage';
 import { useGetBooksMutation } from 'services/apis/bookApi/bookStoreApi';
 
-export const NavLayoutContext = createContext<Partial<PaginationContext>>({});
+export const NavLayoutContext = createContext<Partial<NavLayoutContext>>({});
 
 const NavLayout = () => {
   const MIN_PAGE_INDEX = 1;
   const navigate = useNavigate();
   const { LOGIN, VERIFY_OTP } = PATHS;
   const [limit, setLimit] = useState<number>(10);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState<number>(MIN_PAGE_INDEX);
 
   const { isAuthenticated } = useAppSelector(state => state.userData);
@@ -50,11 +51,11 @@ const NavLayout = () => {
 
   return (
     <NavLayoutContext.Provider
-      value={{ page, setPage, limit, setLimit, MIN_PAGE_INDEX, isLoading }}>
+      value={{ page, setPage, limit, setLimit, MIN_PAGE_INDEX, isLoading, contentRef }}>
       <main className='h-screen grid grid-cols-[15%_85%] grid-rows-[12%_88%]'>
         <Navigation />
         <Searchbar />
-        <div className='overflow-y-auto p-4'>
+        <div ref={contentRef} className='overflow-y-auto p-4'>
           <Suspense fallback={<Loading />}>
             <Outlet />
           </Suspense>

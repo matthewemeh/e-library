@@ -7,6 +7,10 @@ interface PaginationContext {
   setLimit: React.Dispatch<React.SetStateAction<number>>;
 }
 
+interface NavLayoutContext extends PaginationContext {
+  contentRef: React.RefObject<HTMLDivElement>;
+}
+
 interface AppContext {
   prefersDarkMode: boolean;
 }

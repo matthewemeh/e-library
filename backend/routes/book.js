@@ -49,7 +49,7 @@ router.route('/').post(upload.any(), async (req, res) => {
       fieldname.includes(IMAGE_CONTENTS_KEY)
     );
     const newBook = new Book({ authors, content, pages, title, category });
-    for (let i = 0; i < imageContents.Length; i++) {
+    for (let i = 0; i < imageContents.length; i++) {
       const imageRef = ref(storage, `books/${newBook._id}/${newBook._id}_${i + 1}`);
       const snapshot = await uploadBytes(imageRef, imageContents[i].buffer);
       const url = await getDownloadURL(snapshot.ref);

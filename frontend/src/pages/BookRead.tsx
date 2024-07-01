@@ -1,7 +1,7 @@
-import { useEffect, useMemo } from 'react';
 import { FaUserAlt } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { MdOutlineDateRange } from 'react-icons/md';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { RiBookmarkFill, RiBookmarkLine, RiFolderWarningLine } from 'react-icons/ri';
 
 import { getDateProps } from 'utils';
@@ -13,26 +13,30 @@ import {
 } from 'services/apis/bookApi/bookStoreApi';
 
 import BookImage from 'components/BookImage';
+import { NavLayoutContext } from 'layouts/NavLayout';
 
 const BookRead = () => {
   const { id } = useParams();
+  const { contentRef } = useContext(NavLayoutContext);
   const { allBooks } = useAppSelector(state => state.bookStore);
   const {
     booksRead,
     _id: userID,
     bookmarkedBookIDs
   } = useAppSelector(state => state.userStore.currentUser);
+  const [pageProgress, setPageProgress] = useState<number>(
+    booksRead.find(({ bookID }) => bookID === id)?.percentRead ?? 0
+  );
   const [increaseReads, { isError: isReadsError, error: readsError, isSuccess: isReadsSuccess }] =
     useIncreaseReadsMutation();
-  const [updateUser, { error: updateError, isError: isUpdateError, isLoading: isUpdateLoading }] =
-    useUpdateUserMutation();
+  const [updateUser, { error: updateError, isError: isUpdateError }] = useUpdateUserMutation();
 
   const [
     increaseBookmarks,
     { isError: isBookmarkError, error: bookmarkError, isLoading: isBookmarkLoading }
   ] = useIncreaseBookmarksMutation();
 
-  const { title, content, authors, coverImageUrl, imageContentUrls, updatedAt } = allBooks.find(
+  const { title, content, authors, imageContentUrls, updatedAt } = allBooks.find(
     ({ _id }) => _id === id
   )!;
   const { longMonthName, monthDate, year } = getDateProps(updatedAt);
@@ -40,18 +44,59 @@ const BookRead = () => {
 
   const isBookmarked = useMemo<boolean>(() => bookmarkedBookIDs.includes(id!), [bookmarkedBookIDs]);
 
+  console.log(pageProgress);
+  const watchContentScroll = useCallback(() => {
+    const contentElement: HTMLDivElement | null = contentRef!.current!;
+
+    const newPageProgress: number =
+      ((contentElement.scrollTop + 656) / contentElement.scrollHeight) * 100;
+    if (newPageProgress > pageProgress) {
+      if (newPageProgress > 100) setPageProgress(100);
+      else setPageProgress(newPageProgress);
+    }
+  }, [pageProgress]);
+
   useEffect(() => {
-    const bookAlreadyRead = booksRead.find(({ bookID }) => bookID === id);
-    if (id) {
+    const contentElement: HTMLDivElement | null = contentRef!.current!;
+    if (pageProgress > 0) {
+      contentElement.scrollTo({
+        behavior: 'smooth',
+        top: pageProgress * contentElement.scrollHeight
+      });
+    }
+
+    contentElement.addEventListener('scroll', watchContentScroll);
+
+    return () => {
+      contentElement.addEventListener('scroll', watchContentScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (Math.floor(pageProgress) % 4 === 0) {
+      const bookAlreadyRead = booksRead.find(({ bookID }) => bookID === id);
       if (bookAlreadyRead) {
         updateUser({
           userID,
           _id: userID,
-          bookRead: { ...bookAlreadyRead, lastOpened: new Date().toISOString() }
+          bookRead: { ...bookAlreadyRead, percentRead: Math.floor(pageProgress) }
         });
-      } else {
-        increaseReads({ _id: id });
       }
+    }
+  }, [pageProgress]);
+
+  useEffect(() => {
+    const bookAlreadyRead = booksRead.find(({ bookID }) => bookID === id);
+    if (!id) return;
+
+    if (bookAlreadyRead) {
+      updateUser({
+        userID,
+        _id: userID,
+        bookRead: { ...bookAlreadyRead, lastOpened: new Date().toISOString() }
+      });
+    } else {
+      increaseReads({ _id: id });
     }
   }, [id]);
 

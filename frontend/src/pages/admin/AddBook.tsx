@@ -22,6 +22,7 @@ const AddBook = () => {
 
   const [coverImageChanged, setCoverImageChanged] = useState<boolean>(false);
 
+  const formRef = useRef<HTMLFormElement>(null);
   const pagesRef = useRef<HTMLInputElement>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const authorsRef = useRef<HTMLInputElement>(null);
@@ -84,6 +85,7 @@ const AddBook = () => {
     if (isSuccess) {
       setCoverImageChanged(false);
       showAlert({ msg: 'Book added successfully' });
+      formRef.current!.reset();
     }
   }, [isSuccess]);
 
@@ -110,7 +112,7 @@ const AddBook = () => {
         />
       </label>
 
-      <form onSubmit={handleAddBook}>
+      <form onSubmit={handleAddBook} ref={formRef}>
         <h1 className='text-2xl font-semibold mt-4'>New Book information</h1>
 
         <FormInput
