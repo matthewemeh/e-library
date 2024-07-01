@@ -36,10 +36,10 @@ const BookRead = () => {
     { isError: isBookmarkError, error: bookmarkError, isLoading: isBookmarkLoading }
   ] = useIncreaseBookmarksMutation();
 
-  const { title, content, authors, imageContentUrls, updatedAt } = allBooks.find(
+  const { title, content, authors, imageContentUrls, createdAt } = allBooks.find(
     ({ _id }) => _id === id
   )!;
-  const { longMonthName, monthDate, year } = getDateProps(updatedAt);
+  const { longMonthName, monthDate, year } = getDateProps(createdAt);
   const authorText = authors.length > 1 ? authors[0].concat(' et al') : authors[0];
 
   const isBookmarked = useMemo<boolean>(() => bookmarkedBookIDs.includes(id!), [bookmarkedBookIDs]);

@@ -21,14 +21,14 @@ const BookPreview = () => {
     title,
     content,
     authors,
-    updatedAt,
+    createdAt,
     bookmarks,
     coverImageUrl,
     imageContentUrls
   } = allBooks.find(({ _id }) => _id === id)!;
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const authorText = authors.length > 1 ? authors[0].concat(' et al') : authors[0];
-  const { longMonthName, monthDate, year } = getDateProps(updatedAt);
+  const { longMonthName, monthDate, year } = getDateProps(createdAt);
 
   return (
     <PageLayout extraClassNames='bg-white rounded-md p-8 grid grid-cols-[60%_40%] dark:bg-nile-blue-900'>

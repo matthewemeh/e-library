@@ -35,10 +35,7 @@ module.exports = {
         'zircon-shade-1': '#f6f9fe'
       },
       borderRadius: { half: '50%' },
-      fontFamily: {
-        inter: ['Inter', ...systemFonts],
-        manrope: ['Manrope', ...systemFonts]
-      },
+      fontFamily: { inter: ['Inter', ...systemFonts], ubuntu: ['Ubuntu', ...systemFonts] },
       screens: {
         'small-phones': { max: '340px' },
         phones: { max: '600px' },

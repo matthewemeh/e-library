@@ -23,10 +23,11 @@ const BooksPanel: React.FC<Props> = ({
   filterPredicate = () => true
 }) => {
   const [sortQuery, setSortQuery] = useState<SortQuery>();
-  const { page, setPage, isLoading } = useContext(NavLayoutContext);
   const { paginatedBooks, pages, allBooks } = useAppSelector(state => state.bookStore);
+  const { page, setPage, isLoading, limit, MIN_PAGE_INDEX } = useContext(NavLayoutContext);
+
   const sortedBooks = useMemo<Book[]>(() => {
-    const newBooks: Book[] = paginated ? [...paginatedBooks] : [...allBooks];
+    const newBooks: Book[] = paginated && !sortQuery ? [...paginatedBooks] : [...allBooks];
     switch (sortQuery) {
       case 'popular':
         newBooks.sort((a, b) => b.reads - a.reads);
@@ -41,8 +42,15 @@ const BooksPanel: React.FC<Props> = ({
         newBooks.sort((a, b) => b.pages - a.pages);
         break;
     }
+    if (sortQuery) {
+      return newBooks.filter(filterPredicate).slice((page! - 1) * limit!, page! * limit!);
+    }
     return newBooks.filter(filterPredicate);
-  }, [paginatedBooks, sortQuery, paginated, filterPredicate]);
+  }, [paginatedBooks, sortQuery, paginated, filterPredicate, page, limit]);
+
+  const handleSort = (newSort: SortQuery) => {
+    setSortQuery(newSort);
+  };
 
   return (
     <section className='bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
@@ -50,10 +58,10 @@ const BooksPanel: React.FC<Props> = ({
         <header className='flex mb-7 items-center justify-between gap-3'>
           {showFilters && (
             <div className='flex items-center gap-3'>
-              <SortButton name='Popular' onClick={() => setSortQuery('popular')} />
-              <SortButton name='Latest' onClick={() => setSortQuery('new')} />
-              <SortButton name='Bookmarks' onClick={() => setSortQuery('bookmarks')} />
-              <SortButton name='Pages' onClick={() => setSortQuery('pages')} />
+              <SortButton name='Popular' onClick={() => handleSort('popular')} />
+              <SortButton name='Latest' onClick={() => handleSort('new')} />
+              <SortButton name='Bookmarks' onClick={() => handleSort('bookmarks')} />
+              <SortButton name='Pages' onClick={() => handleSort('pages')} />
             </div>
           )}
           {pages > 0 && paginated && (
