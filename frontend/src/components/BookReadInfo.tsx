@@ -40,7 +40,7 @@ const BookReadInfo: React.FC<Props> = ({
       </span>
 
       <span className='flex items-center gap-3'>
-        {pages > 0 && `${pages} pages`}
+        {pages > 0 && `${pages} page${pages > 1 ? 's' : ''}`}
         <Progress percentage={percentRead} />
       </span>
 
