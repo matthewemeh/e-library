@@ -6,7 +6,8 @@ import Dropdown from './Dropdown';
 import Constants from '../Constants';
 
 import { getDateProps, showAlert } from 'utils';
-import { useAppSelector } from 'hooks/useRootStorage';
+import { updateUsers } from 'services/apis/userApi/userStoreSlice';
+import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 import { useDeleteUserMutation, useUpdateUserMutation } from 'services/apis/userApi/userStoreApi';
 
 interface Props {
@@ -15,8 +16,10 @@ interface Props {
 
 const UserTab: React.FC<Props> = ({ user }) => {
   const { ROLES } = Constants;
+  const dispatch = useAppDispatch();
   const { name, role, profileImageUrl, createdAt, _id } = user;
-  const { _id: userID, role: userRole } = useAppSelector(state => state.userStore.currentUser);
+  const { currentUser, allUsers, paginatedUsers } = useAppSelector(state => state.userStore);
+  const { _id: userID, role: userRole } = currentUser;
 
   const [newRole, setNewRole] = useState<string>(role);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
@@ -60,7 +63,15 @@ const UserTab: React.FC<Props> = ({ user }) => {
   }, [isUpdateSuccess]);
 
   useEffect(() => {
-    if (isDeleteSuccess) showAlert({ msg: 'Deleted user successfully' });
+    if (isDeleteSuccess) {
+      dispatch(
+        updateUsers({
+          allUsers: allUsers.filter(user => user._id !== _id),
+          paginatedUsers: paginatedUsers.filter(user => user._id !== _id)
+        })
+      );
+      showAlert({ msg: 'Deleted user successfully' });
+    }
   }, [isDeleteSuccess]);
 
   useEffect(() => {

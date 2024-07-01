@@ -12,20 +12,13 @@ interface Props {
   bookReadInfo: BookReadInfo;
 }
 
-const BookReadInfo: React.FC<Props> = ({
-  title,
-  pages,
-  isDeleted,
-  bookReadInfo,
-  coverImageUrl
-}) => {
+const BookReadInfo: React.FC<Props> = ({ title, pages, bookReadInfo, coverImageUrl }) => {
   const navigate = useNavigate();
   const { bookID, percentRead } = bookReadInfo;
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   return (
     <button
-      disabled={isDeleted}
       onClick={() => navigate(`/books/${bookID}/read`)}
       className='grid grid-cols-[25%_1fr_20%] gap-4 items-center justify-between px-6 py-1.5 border-2 border-transparent rounded-md shadow-md duration-300 ease-in-out hover:border-current bg-white text-nile-blue-900 dark:bg-nile-blue-950 dark:text-zircon disabled:opacity-50 disabled:cursor-not-allowed disabled:border-transparent'>
       <span className='flex items-center gap-4 relative'>

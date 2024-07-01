@@ -37,6 +37,7 @@ export const showAlert = ({
     'text-center',
     'max-w-[80vw]',
     'duration-500',
+    'font-semibold',
     'dark:bg-zircon',
     'transition-all',
     '-translate-x-1/2',

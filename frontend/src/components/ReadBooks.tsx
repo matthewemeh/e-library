@@ -12,6 +12,10 @@ const ReadBooks = () => {
 
       {[...booksRead]
         .sort((a, b) => new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime())
+        .filter(({ bookID }) => {
+          const bookIndex: number = allBooks.findIndex(({ _id }) => _id === bookID);
+          return bookIndex > -1;
+        })
         .map(bookReadInfo => {
           const { bookID }: BookReadInfo = bookReadInfo;
           const bookIndex: number = allBooks.findIndex(({ _id }) => _id === bookID);
@@ -23,7 +27,6 @@ const ReadBooks = () => {
               pages={pages}
               title={title}
               bookReadInfo={bookReadInfo}
-              isDeleted={bookIndex === -1}
               coverImageUrl={coverImageUrl}
             />
           );

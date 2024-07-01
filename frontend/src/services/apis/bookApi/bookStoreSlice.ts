@@ -11,7 +11,11 @@ const refreshAction: ActionHandler<PaginatedBooksResponse> = (state, { payload }
     // indicates paginated response
     return { ...state, paginatedBooks: payload.docs, pages: payload.pages };
   }
-  return { ...state, allBooks: payload };
+  return {
+    ...state,
+    allBooks: payload,
+    paginatedBooks: state.paginatedBooks.filter(({ _id }) => payload.some(book => book._id === _id))
+  };
 };
 
 const updateAction: ActionHandler<Book> = (state, { payload }) => {

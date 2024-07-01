@@ -44,7 +44,6 @@ const BookRead = () => {
 
   const isBookmarked = useMemo<boolean>(() => bookmarkedBookIDs.includes(id!), [bookmarkedBookIDs]);
 
-  console.log(pageProgress);
   const watchContentScroll = useCallback(() => {
     const contentElement: HTMLDivElement | null = contentRef!.current!;
 

@@ -4,6 +4,22 @@ const storage = require('../firebase-config');
 const { User, roles } = require('../models/user.model');
 const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
 
+async function checkIfFileExists(filePath) {
+  const storageRef = ref(storage, filePath);
+
+  getDownloadURL(storageRef)
+    .then(url => {
+      return Promise.resolve(true);
+    })
+    .catch(error => {
+      if (error.code === 'storage/object-not-found') {
+        return Promise.resolve(false);
+      } else {
+        return Promise.reject(error);
+      }
+    });
+}
+
 const upload = multer();
 
 /* Multipart key information */
@@ -132,9 +148,12 @@ router.route('/delete-profile-image/:id').patch(async (req, res) => {
     }
 
     /* delete user image */
-    const fileRef = ref(storage, `users/${userToBeUpdated._id}`);
-    await deleteObject(fileRef);
-    userToBeUpdated.profileImageUrl = '';
+    const fileExists = await checkIfFileExists(`users/${userToBeUpdated._id}`);
+    if (fileExists) {
+      const fileRef = ref(storage, `users/${userToBeUpdated._id}`);
+      await deleteObject(fileRef);
+      userToBeUpdated.profileImageUrl = '';
+    }
 
     const updatedUser = await userToBeUpdated.save();
     res.status(200).json(updatedUser);
@@ -210,8 +229,11 @@ router.route('/:id').delete(async (req, res) => {
     await User.findByIdAndDelete(id);
 
     /* delete user image */
-    const fileRef = ref(storage, `users/${id}`);
-    await deleteObject(fileRef);
+    const fileExists = await checkIfFileExists(`users/${id}`);
+    if (fileExists) {
+      const fileRef = ref(storage, `users/${id}`);
+      await deleteObject(fileRef);
+    }
 
     res.status(200).send('User removed');
   } catch (err) {

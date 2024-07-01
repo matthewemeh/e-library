@@ -27,7 +27,11 @@ const refreshAction: ActionHandler<PaginatedUsersResponse> = (state, { payload }
     // indicates paginated response
     return { ...state, paginatedUsers: payload.docs, pages: payload.pages };
   }
-  return { ...state, allUsers: payload };
+  return {
+    ...state,
+    allUsers: payload,
+    paginatedUsers: state.paginatedUsers.filter(({ _id }) => payload.some(user => user._id === _id))
+  };
 };
 
 const updateAction: ActionHandler<User> = (state, { payload }) => {
