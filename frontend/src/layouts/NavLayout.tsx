@@ -1,5 +1,5 @@
-import { Outlet, useNavigate } from 'react-router-dom';
-import { Suspense, useCallback, useEffect, useRef, useState, createContext } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Suspense, useCallback, useEffect, useRef, useState, createContext, useMemo } from 'react';
 
 import Loading from 'components/Loading';
 import Searchbar from 'components/Searchbar';
@@ -10,21 +10,29 @@ import { PATHS } from 'routes/PathConstants';
 import { useAppSelector } from 'hooks/useRootStorage';
 import { useGetBooksMutation } from 'services/apis/bookApi/bookStoreApi';
 
+type NavigationPaths = (typeof PATHS)[keyof typeof PATHS];
+
 export const NavLayoutContext = createContext<Partial<NavLayoutContext>>({});
 
 const NavLayout = () => {
   const MIN_PAGE_INDEX = 1;
   const navigate = useNavigate();
-  const { LOGIN, VERIFY_OTP } = PATHS;
+  const { pathname } = useLocation();
   const [limit, setLimit] = useState<number>(10);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [transparent, setTransparent] = useState(true);
+  const [search, setSearch] = useState<string>('');
   const [page, setPage] = useState<number>(MIN_PAGE_INDEX);
+  const { LOGIN, VERIFY_OTP, HOME, BOOKS, BOOKMARKS } = PATHS;
+  const [transparent, setTransparent] = useState<boolean>(true);
 
   const { isAuthenticated } = useAppSelector(state => state.userData);
   const { paginatedBooks } = useAppSelector(state => state.bookStore);
   const [getBooks, { error, isError, isLoading }] = useGetBooksMutation();
   const { emailValidated } = useAppSelector(state => state.userStore.currentUser);
+
+  const searchBarVisible = useMemo<boolean>(() => {
+    return ([HOME, BOOKS, BOOKMARKS] as string[]).includes(pathname);
+  }, [pathname]);
 
   useEffect(() => setPage(MIN_PAGE_INDEX), [limit]);
 
@@ -73,10 +81,23 @@ const NavLayout = () => {
 
   return (
     <NavLayoutContext.Provider
-      value={{ page, setPage, limit, setLimit, MIN_PAGE_INDEX, isLoading, contentRef }}>
+      value={{
+        page,
+        limit,
+        search,
+        setPage,
+        setLimit,
+        setSearch,
+        isLoading,
+        contentRef,
+        MIN_PAGE_INDEX
+      }}>
       <main className='h-screen grid grid-cols-[15%_85%] grid-rows-[12%_88%]'>
         <Navigation />
-        <Searchbar extraClassNames={`${transparent || 'z-[1] shadow-[5px_4px_5px_0px_#000]'}`} />
+        <Searchbar
+          searchBarDisabled={!searchBarVisible}
+          extraClassNames={`${transparent || 'z-[1] shadow-[5px_4px_5px_0px_#000]'}`}
+        />
         <div ref={contentRef} className='overflow-y-auto p-4'>
           <Suspense fallback={<Loading />}>
             <Outlet />

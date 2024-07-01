@@ -8,7 +8,9 @@ interface PaginationContext {
 }
 
 interface NavLayoutContext extends PaginationContext {
+  search: string;
   contentRef: React.RefObject<HTMLDivElement>;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface AppContext {

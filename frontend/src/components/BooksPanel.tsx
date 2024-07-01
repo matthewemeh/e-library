@@ -1,5 +1,5 @@
 import { GiBookCover } from 'react-icons/gi';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 import Book from './Book';
 import Loading from './Loading';
@@ -24,10 +24,13 @@ const BooksPanel: React.FC<Props> = ({
 }) => {
   const [sortQuery, setSortQuery] = useState<SortQuery>();
   const { paginatedBooks, pages, allBooks } = useAppSelector(state => state.bookStore);
-  const { page, setPage, isLoading, limit, MIN_PAGE_INDEX } = useContext(NavLayoutContext);
+  const { page, setPage, isLoading, limit, search, setSearch } = useContext(NavLayoutContext);
+
+  useEffect(() => setSearch!(''), []);
 
   const sortedBooks = useMemo<Book[]>(() => {
-    const newBooks: Book[] = paginated && !sortQuery ? [...paginatedBooks] : [...allBooks];
+    const newBooks: Book[] =
+      paginated && !sortQuery && !search ? [...paginatedBooks] : [...allBooks];
     switch (sortQuery) {
       case 'popular':
         newBooks.sort((a, b) => b.reads - a.reads);
@@ -44,9 +47,19 @@ const BooksPanel: React.FC<Props> = ({
     }
     if (sortQuery) {
       return newBooks.filter(filterPredicate).slice((page! - 1) * limit!, page! * limit!);
+    } else if (search) {
+      return newBooks
+        .filter(filterPredicate)
+        .filter(({ title, authors }) => {
+          return (
+            title.toLowerCase().includes(search!.toLowerCase()) ||
+            authors.join('').toLowerCase().includes(search!.toLowerCase())
+          );
+        })
+        .slice((page! - 1) * limit!, page! * limit!);
     }
     return newBooks.filter(filterPredicate);
-  }, [paginatedBooks, sortQuery, paginated, filterPredicate, page, limit]);
+  }, [paginatedBooks, sortQuery, paginated, filterPredicate, page, limit, search]);
 
   const handleSort = (newSort: SortQuery) => {
     setSortQuery(newSort);
@@ -64,7 +77,7 @@ const BooksPanel: React.FC<Props> = ({
               <SortButton name='Pages' onClick={() => handleSort('pages')} />
             </div>
           )}
-          {pages > 0 && paginated && (
+          {pages > 0 && paginated && !search && (
             <PaginationControls page={page!} pages={pages} setPage={setPage!} />
           )}
         </header>

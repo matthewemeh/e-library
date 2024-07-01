@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { RiMoonLine, RiSearch2Line, RiSunLine, RiUser3Line } from 'react-icons/ri';
 
@@ -6,16 +6,19 @@ import { PATHS } from 'routes/PathConstants';
 import { logout } from 'services/apis/userApi/userStoreSlice';
 import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
+import { NavLayoutContext } from 'layouts/NavLayout';
 
 interface Props {
   extraClassNames?: string;
+  searchBarDisabled?: boolean;
 }
 
-const Searchbar: React.FC<Props> = ({ extraClassNames }) => {
+const Searchbar: React.FC<Props> = ({ extraClassNames, searchBarDisabled }) => {
+  const { search, setSearch } = useContext(NavLayoutContext);
+
   const { PROFILE, LOGIN } = PATHS;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const { profileImageUrl } = useAppSelector(state => state.userStore.currentUser);
@@ -29,12 +32,17 @@ const Searchbar: React.FC<Props> = ({ extraClassNames }) => {
   return (
     <div
       className={`px-4 flex items-center justify-between gap-5 bg-white dark:bg-nile-blue-900 dark:text-nile-blue-900 ${extraClassNames}`}>
-      <div className='w-1/2 flex gap-2.5 items-center p-2.5 rounded-lg bg-zircon'>
+      <div
+        className={`w-1/2 flex gap-2.5 items-center p-2.5 rounded-lg bg-zircon ${
+          searchBarDisabled && 'opacity-50'
+        }`}>
         <RiSearch2Line className='text-current' />
         <input
           type='text'
-          ref={searchInputRef}
-          placeholder='Search'
+          value={search!}
+          disabled={searchBarDisabled}
+          onChange={e => setSearch!(e.target.value)}
+          placeholder='Search by Book Title or Author'
           className='bg-transparent outline-none w-full placeholder:text-nile-blue-600'
         />
       </div>
