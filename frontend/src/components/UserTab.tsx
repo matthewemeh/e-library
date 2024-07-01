@@ -18,6 +18,7 @@ const UserTab: React.FC<Props> = ({ user }) => {
   const { ROLES } = Constants;
   const dispatch = useAppDispatch();
   const { name, role, profileImageUrl, createdAt, _id } = user;
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const { currentUser, allUsers, paginatedUsers } = useAppSelector(state => state.userStore);
   const { _id: userID, role: userRole } = currentUser;
 
@@ -80,7 +81,9 @@ const UserTab: React.FC<Props> = ({ user }) => {
 
   return (
     <div
-      className={`grid mb-3 bg-zircon p-4 rounded-md items-center last:mb-0 dark:bg-nile-blue-950 ${
+      className={`grid mb-3 bg-zircon p-4 rounded-md items-center last:mb-0 ${
+        prefersDarkMode && 'dark:bg-nile-blue-950'
+      } ${
         userRole === 'SUPER_ADMIN' ? 'grid-cols-[repeat(4,minmax(0,1fr))_30px]' : 'grid-cols-4'
       }`}>
       <div className='block relative w-10 h-10 bg-zircon rounded-half cursor-pointer'>
@@ -92,7 +95,11 @@ const UserTab: React.FC<Props> = ({ user }) => {
           className={`w-full h-full rounded-half ${imageLoaded || 'opacity-0 invisible'}`}
         />
         {imageLoaded || (
-          <RiUser3Line className='absolute p-2 top-0 left-0 w-full h-full text-current border rounded-full dark:text-nile-blue-900' />
+          <RiUser3Line
+            className={`absolute p-2 top-0 left-0 w-full h-full text-current border rounded-full ${
+              prefersDarkMode && 'dark:text-nile-blue-900'
+            }`}
+          />
         )}
       </div>
       <p>{name}</p>

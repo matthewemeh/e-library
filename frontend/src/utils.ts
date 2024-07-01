@@ -30,7 +30,6 @@ export const showAlert = ({
     'left-1/2',
     'z-[9999]',
     'shadow-lg',
-    'text-white',
     'font-inter',
     'rounded-md',
     'text-[1rem]',
@@ -39,13 +38,17 @@ export const showAlert = ({
     'max-w-[80vw]',
     'duration-500',
     'font-semibold',
-    'dark:bg-zircon',
     'transition-all',
+    'text-swan-white',
     '-translate-x-1/2',
     'bg-nile-blue-900',
-    'tracking-[0.04em]',
-    'dark:text-nile-blue-900'
+    'tracking-[0.04em]'
   );
+  const persistRoot = JSON.parse(localStorage.getItem('persist:root') ?? '{}');
+  const persistRootObject = JSON.parse(persistRoot.userData ?? '{}');
+  const { prefersDarkMode } = persistRootObject;
+  prefersDarkMode && addClass(alertDiv, 'dark:bg-zircon', 'dark:text-nile-blue-900');
+
   alertDiv.style.bottom = '-150px';
   document.body.appendChild(alertDiv);
 

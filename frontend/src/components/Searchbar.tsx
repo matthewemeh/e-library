@@ -31,7 +31,9 @@ const Searchbar: React.FC<Props> = ({ extraClassNames, searchBarDisabled }) => {
 
   return (
     <div
-      className={`px-4 flex items-center justify-between gap-5 bg-white dark:bg-nile-blue-900 dark:text-nile-blue-900 ${extraClassNames}`}>
+      className={`px-4 flex items-center justify-between gap-5 bg-swan-white ${
+        prefersDarkMode && 'dark:bg-nile-blue-900 dark:text-nile-blue-900'
+      } ${extraClassNames}`}>
       <div
         className={`w-1/2 flex gap-2.5 items-center p-2.5 rounded-lg bg-zircon ${
           searchBarDisabled && 'opacity-50'
@@ -81,9 +83,9 @@ const Searchbar: React.FC<Props> = ({ extraClassNames, searchBarDisabled }) => {
           id='portal-menu'
           aria-labelledby='header-menu-button'
           onClick={() => setMenuOpened(false)}
-          className={`text-[14px] text-center z-[5] bg-zircon overflow-hidden flex flex-col rounded-b w-[120px] absolute top-[calc(100%+10px)] right-0 shadow-[0_10px_20px_0_rgba(219,219,219,0.25)] duration-500 dark:bg-nile-blue-900 dark:shadow-lg dark:text-zircon ${
-            menuOpened ? 'max-h-[300px]' : 'max-h-0'
-          }`}>
+          className={`text-[14px] text-center z-[5] bg-zircon overflow-hidden flex flex-col rounded-b w-[120px] absolute top-[calc(100%+10px)] right-0 shadow-[0_10px_20px_0_rgba(219,219,219,0.25)] duration-500 ${
+            prefersDarkMode && 'dark:bg-nile-blue-900 dark:shadow-lg dark:text-zircon'
+          } ${menuOpened ? 'max-h-[300px]' : 'max-h-0'}`}>
           <Link role='menuitem' to={PROFILE} className='h-10 grid place-items-center shrink-0'>
             Profile
           </Link>

@@ -106,7 +106,10 @@ const EditBook = () => {
   }, [error, isError]);
 
   return (
-    <PageLayout extraClassNames='pl-[1.5%] pr-10 bg-white p-8 rounded-lg dark:bg-nile-blue-900 grid grid-cols-[40%_60%] gap-5'>
+    <PageLayout
+      extraClassNames={`pl-[1.5%] pr-10 bg-swan-white p-8 rounded-lg grid grid-cols-[40%_60%] gap-5 ${
+        prefersDarkMode && 'dark:bg-nile-blue-900'
+      }`}>
       <label
         htmlFor='cover-image'
         className={`cursor-pointer h-[80vh] shadow rounded-md overflow-hidden border-current ${
@@ -138,7 +141,7 @@ const EditBook = () => {
           defaultValue={title}
           inputName='book-title'
           extraLabelClassNames='mt-8'
-          extraInputClassNames='dark:bg-nile-blue-950'
+          extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 
         <FormInput
@@ -151,7 +154,7 @@ const EditBook = () => {
           extraLabelClassNames='mt-[15px]'
           formatRule={{ allowedChars: '0123456789' }}
           defaultValue={(pages > 0 ? pages : '').toString()}
-          extraInputClassNames='dark:bg-nile-blue-950'
+          extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 
         <FormInput
@@ -164,7 +167,7 @@ const EditBook = () => {
           inputID='book-category'
           inputName='book-category'
           extraLabelClassNames='mt-[15px]'
-          extraInputClassNames='dark:bg-nile-blue-950'
+          extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 
         <FormInput
@@ -177,7 +180,7 @@ const EditBook = () => {
           inputName='book-authors'
           extraLabelClassNames='mt-[15px]'
           defaultValue={authors.join(', ')}
-          extraInputClassNames='dark:bg-nile-blue-950'
+          extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 
         <TextArea
@@ -190,7 +193,7 @@ const EditBook = () => {
           textareaID='book-content'
           textareaName='book-content'
           extraLabelClassNames='mt-[15px]'
-          extraTextareaClassNames='resize-y dark:bg-nile-blue-950'
+          extraTextareaClassNames={`resize-y ${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 
         <FormInput
@@ -201,7 +204,7 @@ const EditBook = () => {
           inputRef={coverImageRef}
           accept={ACCEPTED_IMAGE_TYPES}
           extraLabelClassNames='mt-[15px]'
-          extraInputClassNames='dark:bg-nile-blue-950'
+          extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
           onChange={e => {
             const imageFile: File | undefined = e.target.files?.[0];
             updatePreviewImage(imageFile);
@@ -217,8 +220,8 @@ const EditBook = () => {
           inputRef={imageContentsRef}
           accept={ACCEPTED_IMAGE_TYPES}
           extraLabelClassNames='mt-[15px]'
-          extraInputClassNames='dark:bg-nile-blue-950'
           onChange={() => setImageContentsChanged(true)}
+          extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 
         <AuthButton
@@ -226,7 +229,10 @@ const EditBook = () => {
           title='Update'
           disabled={isLoading}
           isLoading={isLoading}
-          extraClassNames='!w-1/2 mx-auto dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon'
+          extraClassNames={`!w-1/2 mx-auto ${
+            prefersDarkMode &&
+            'dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon'
+          }`}
         />
       </form>
     </PageLayout>

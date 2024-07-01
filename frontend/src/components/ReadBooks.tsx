@@ -4,10 +4,14 @@ import { useAppSelector } from 'hooks/useRootStorage';
 
 const ReadBooks = () => {
   const { allBooks } = useAppSelector(state => state.bookStore);
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const { booksRead } = useAppSelector(state => state.userStore.currentUser);
 
   return booksRead.length > 0 ? (
-    <section className='mb-7 flex flex-col gap-2 bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
+    <section
+      className={`mb-7 flex flex-col gap-2 bg-swan-white p-8 rounded-lg ${
+        prefersDarkMode && 'dark:bg-nile-blue-900'
+      }`}>
       <h2 className='font-bold text-2xl mb-5'>Continue your reading</h2>
 
       {[...booksRead]

@@ -3,23 +3,27 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { PATHS } from 'routes/PathConstants';
 import { addClass, removeClass } from '../utils';
+import { useAppSelector } from 'hooks/useRootStorage';
 
-type ActiveNavigation = (typeof PATHS)[keyof typeof PATHS];
+type AppRoute = (typeof PATHS)[keyof typeof PATHS];
 
 interface Props {
   text: string;
+  to: AppRoute;
   icon: JSX.Element;
-  to: ActiveNavigation;
 }
 
 const NavigationTab: React.FC<Props> = ({ to, icon, text }) => {
   const NAV_LINK = 'nav-link';
   const { pathname } = useLocation();
   const linkRef = useRef<HTMLAnchorElement>(null);
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
 
   useEffect(() => {
-    if (pathname === to) addClass(linkRef.current, 'bg-zircon', 'dark:text-nile-blue-900');
-    else removeClass(linkRef.current, 'bg-zircon', 'dark:text-nile-blue-900');
+    if (pathname === to)
+      addClass(linkRef.current, 'bg-zircon', `${prefersDarkMode && 'dark:text-nile-blue-900'}`);
+    else
+      removeClass(linkRef.current, 'bg-zircon', `${prefersDarkMode && 'dark:text-nile-blue-900'}`);
   }, [pathname, linkRef]);
 
   return (

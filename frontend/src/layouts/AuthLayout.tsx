@@ -67,7 +67,7 @@ const AuthLayout = () => {
   return (
     <main className='h-screen grid grid-cols-2'>
       <div></div>
-      <div className='bg-white text-nile-blue-900'>
+      <div className='bg-swan-white text-nile-blue-900'>
         <AuthContext.Provider
           value={{ OTP_DETAILS_KEY: 'otpDetails', onOtpValidated, mailPretext, mailSubject }}>
           <Suspense fallback={<Loading />}>

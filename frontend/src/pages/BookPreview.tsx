@@ -15,6 +15,7 @@ import { useAppSelector } from 'hooks/useRootStorage';
 const BookPreview = () => {
   const { id } = useParams();
   const { allBooks } = useAppSelector(state => state.bookStore);
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const {
     reads,
     pages,
@@ -31,7 +32,10 @@ const BookPreview = () => {
   const { longMonthName, monthDate, year } = getDateProps(createdAt);
 
   return (
-    <PageLayout extraClassNames='bg-white rounded-md p-8 grid grid-cols-[60%_40%] dark:bg-nile-blue-900'>
+    <PageLayout
+      extraClassNames={`bg-swan-white rounded-md p-8 grid grid-cols-[60%_40%] ${
+        prefersDarkMode && 'dark:bg-nile-blue-900'
+      }`}>
       <div>
         <h1 className='text-[56px] leading-[64px] font-semibold pr-2'>{title}</h1>
         <p className='flex items-center gap-3 mt-4'>
@@ -47,13 +51,19 @@ const BookPreview = () => {
             {minifyViews(reads)}
             {reads > 1000 && '+'} read{reads !== 1 && 's'}
           </div>
-          <div className="flex flex-col gap-1 text-[14px] items-center justify-center px-7 relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:content-[''] before:w-[1px] before:h-[45%] before:opacity-50 before:bg-nile-blue-900 before:dark:bg-zircon">
+          <div
+            className={`flex flex-col gap-1 text-[14px] items-center justify-center px-7 relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:content-[''] before:w-[1px] before:h-[45%] before:opacity-50 before:bg-nile-blue-900 ${
+              prefersDarkMode && 'before:dark:bg-zircon'
+            }`}>
             <RiBookmarkFill className='text-current text-[30px]' />
             {minifyViews(bookmarks)}
             {bookmarks > 1000 && '+'} bookmark{bookmarks !== 1 && 's'}
           </div>
           {pages > 0 && (
-            <div className="flex flex-col gap-1 text-[14px] items-center justify-center px-7 relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:content-[''] before:w-[1px] before:h-[45%] before:opacity-50 before:bg-nile-blue-900 before:dark:bg-zircon">
+            <div
+              className={`flex flex-col gap-1 text-[14px] items-center justify-center px-7 relative before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:content-[''] before:w-[1px] before:h-[45%] before:opacity-50 before:bg-nile-blue-900 ${
+                prefersDarkMode && 'before:dark:bg-zircon'
+              }`}>
               <SiPowerpages className='text-current text-[30px]' />
               {pages} pages
             </div>
@@ -62,7 +72,9 @@ const BookPreview = () => {
 
         <Link
           to={`/books/${id}/read`}
-          className='bg-nile-blue-900 text-zircon py-2 px-8 w-[180px] h-12 grid place-items-center text-xl rounded-md my-7 border border-transparent font-semibold duration-300 dark:bg-zircon dark:text-nile-blue-900 hover:bg-transparent hover:text-nile-blue-900 hover:dark:text-zircon hover:border-current'>
+          className={`bg-nile-blue-900 text-zircon py-2 px-8 w-[180px] h-12 grid place-items-center text-xl rounded-md my-7 border border-transparent font-semibold duration-300 hover:bg-transparent hover:text-nile-blue-900 hover:border-current ${
+            prefersDarkMode && 'dark:bg-zircon dark:text-nile-blue-900 hover:dark:text-zircon'
+          }`}>
           Read
         </Link>
 

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import CaretDownImage from 'assets/caret-down-fill.svg';
 
+import { useAppSelector } from 'hooks/useRootStorage';
+
 interface Props {
   list: string[];
   tabIndex?: number;
@@ -23,6 +25,7 @@ const Dropdown: React.FC<Props> = ({
   extraDropdownButtonClassNames
 }) => {
   const [dropdownActive, setDropdownActive] = useState(false);
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
 
   return (
     <button
@@ -46,16 +49,18 @@ const Dropdown: React.FC<Props> = ({
         role='menu'
         id='dropdown-list'
         aria-labelledby='dropdown-button'
-        className={`absolute z-[1] top-[calc(100%+5px)] w-full max-h-[150px] h-fit rounded-b-lg bg-white shadow-md border border-[rgba(0,0,0,0.1)] flex flex-col overflow-y-auto duration-300 dark:bg-nile-blue-900 ${extraDropdownListClassNames} ${
-          dropdownActive || 'opacity-0 invisible'
-        }`}>
+        className={`absolute z-[1] top-[calc(100%+5px)] w-full max-h-[150px] h-fit rounded-b-lg bg-swan-white shadow-md border border-[rgba(0,0,0,0.1)] flex flex-col overflow-y-auto duration-300 ${
+          prefersDarkMode && 'dark:bg-nile-blue-900'
+        } ${extraDropdownListClassNames} ${dropdownActive || 'opacity-0 invisible'}`}>
         {list.map((item, index) => (
           <li
             key={index}
             role='menuitem'
             className={`cursor-pointer py-1.5 ${
               item === selectedValue &&
-              'bg-nile-blue-900 text-zircon dark:text-nile-blue-900 dark:bg-zircon'
+              `bg-nile-blue-900 text-zircon ${
+                prefersDarkMode && 'dark:text-nile-blue-900 dark:bg-zircon'
+              }`
             }`}
             onClick={e => {
               setSelectedItem(item);

@@ -21,6 +21,7 @@ module.exports = {
       colors: {
         shark: '#1b1c1e',
         zircon: '#f1f6ff',
+        'swan-white': '#fcfcfc',
         'nile-blue-50': '#f4f7fb',
         'nile-blue-100': '#e8edf6',
         'nile-blue-200': '#ccdaeb',

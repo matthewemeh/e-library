@@ -5,18 +5,26 @@ import { RiHome4Line, RiUser3Line, RiBookmarkLine, RiBookOpenLine } from 'react-
 import useAuth from 'hooks/useAuth';
 import NavigationTab from './NavigationTab';
 import { PATHS } from 'routes/PathConstants';
+import { useAppSelector } from 'hooks/useRootStorage';
 
 const Navigation = () => {
   const isAuthorized: boolean = useAuth();
   const { HOME, BOOKMARKS, PROFILE, BOOKS, ADMIN } = PATHS;
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
 
   return (
-    <nav className='row-start-1 row-end-3 p-3 bg-white dark:text-zircon dark:bg-nile-blue-900'>
+    <nav
+      className={`row-start-1 row-end-3 p-3 bg-[#FCFCFC] ${
+        prefersDarkMode && 'dark:text-zircon dark:bg-nile-blue-900'
+      }`}>
       <Link to={HOME} className='font-bold text-xl flex items-center gap-2 w-fit'>
         <MdLocalLibrary className='w-7 h-7 text-current' />
         E-Library
       </Link>
-      <ul className='mt-5 text-nile-blue-800 flex flex-col gap-2 dark:text-zircon'>
+      <ul
+        className={`mt-5 text-nile-blue-800 flex flex-col gap-2 ${
+          prefersDarkMode && 'dark:text-zircon'
+        }`}>
         <li>
           <NavigationTab text='Home' to={HOME} icon={<RiHome4Line className='text-current' />} />
         </li>

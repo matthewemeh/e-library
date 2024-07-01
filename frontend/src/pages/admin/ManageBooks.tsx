@@ -17,6 +17,7 @@ const ManageBooks = () => {
   const MIN_PAGE_INDEX = 1;
   const { NEW_BOOK } = PATHS;
 
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const { allBooks, paginatedBooks, pages } = useAppSelector(state => state.bookStore);
 
   const [limit, setLimit] = useState<number>(10);
@@ -51,7 +52,7 @@ const ManageBooks = () => {
 
   return (
     <PageLayout>
-      <div className='bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
+      <div className={`bg-swan-white p-8 rounded-lg ${prefersDarkMode && 'dark:bg-nile-blue-900'}`}>
         <h1 className='text-3xl font-bold mb-2'>
           Manage Books
           <Link

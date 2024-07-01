@@ -19,6 +19,7 @@ const BookRead = () => {
   const { id } = useParams();
   const { contentRef } = useContext(NavLayoutContext);
   const { allBooks } = useAppSelector(state => state.bookStore);
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const {
     booksRead,
     _id: userID,
@@ -72,6 +73,8 @@ const BookRead = () => {
   }, []);
 
   useEffect(() => {
+    if (!id) return;
+
     if (Math.floor(pageProgress) % 4 === 0) {
       const bookAlreadyRead = booksRead.find(({ bookID }) => bookID === id);
       if (bookAlreadyRead) {
@@ -79,6 +82,12 @@ const BookRead = () => {
           userID,
           _id: userID,
           bookRead: { ...bookAlreadyRead, percentRead: Math.floor(pageProgress) }
+        });
+      } else {
+        updateUser({
+          userID,
+          _id: userID,
+          bookRead: { bookID: id, percentRead: Math.floor(pageProgress) }
         });
       }
     }
@@ -96,6 +105,7 @@ const BookRead = () => {
       });
     } else {
       increaseReads({ _id: id });
+      updateUser({ userID, _id: userID, bookRead: { bookID: id } });
     }
   }, [id]);
 
@@ -124,7 +134,10 @@ const BookRead = () => {
   }, [updateError, isUpdateError]);
 
   return (
-    <article className='bg-white px-6 py-4 rounded-lg flex flex-col items-center justify-center mx-auto dark:bg-nile-blue-900'>
+    <article
+      className={`bg-swan-white px-6 py-4 rounded-lg flex flex-col items-center justify-center mx-auto ${
+        prefersDarkMode && 'dark:bg-nile-blue-900'
+      }`}>
       <h1 className='text-[42px] leading-[52px] -tracking-[0.462px] font-bold'>{title}</h1>
       <div className='grid grid-cols-2 gap-y-1 gap-x-4 mt-4 mb-5'>
         <p className='flex items-center justify-center gap-3'>

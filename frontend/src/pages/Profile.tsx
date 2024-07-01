@@ -60,6 +60,7 @@ const Profile = () => {
   const { _id, name, email, profileImageUrl } = useAppSelector(
     state => state.userStore.currentUser
   );
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
 
   const handleUpdateUser = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
@@ -164,13 +165,18 @@ const Profile = () => {
 
   return (
     <PageLayout>
-      <section className='bg-white p-8 rounded-lg dark:bg-nile-blue-900 flex flex-col items-center'>
+      <section
+        className={`bg-swan-white p-8 rounded-lg flex flex-col items-center ${
+          prefersDarkMode && 'dark:bg-nile-blue-900'
+        }`}>
         <label htmlFor='profile-image' className='relative cursor-pointer'>
           <img
             alt=''
             ref={profileImagePreviewRef}
             src={profileImageUrl || RiUser3Line}
-            className='w-[100px] h-[100px] text-current rounded-half bg-zircon border-2 border-nile-blue-900 dark:border-zircon'
+            className={`w-[100px] h-[100px] text-current rounded-half bg-zircon border-2 border-nile-blue-900 ${
+              prefersDarkMode && 'dark:border-zircon'
+            }`}
           />
           <button
             onClick={handleDeleteUserImage}
@@ -194,7 +200,7 @@ const Profile = () => {
             defaultValue={email}
             autoComplete='username'
             extraLabelClassNames='mt-8'
-            extraInputClassNames='dark:bg-nile-blue-950'
+            extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
           />
 
           <FormInput
@@ -208,7 +214,7 @@ const Profile = () => {
             inputName='full-name'
             autoComplete='full-name'
             extraLabelClassNames='mt-[15px]'
-            extraInputClassNames='dark:bg-nile-blue-950'
+            extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
           />
 
           <FormInput
@@ -223,7 +229,7 @@ const Profile = () => {
             inputRef={profileImageRef}
             accept={ACCEPTED_IMAGE_TYPES}
             extraLabelClassNames='mt-[15px]'
-            extraInputClassNames='dark:bg-nile-blue-950'
+            extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
           />
 
           <AuthButton
@@ -231,14 +237,19 @@ const Profile = () => {
             title='Update'
             disabled={isUpdateLoading}
             isLoading={isUpdateLoading}
-            extraClassNames='dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon'
+            extraClassNames={`${
+              prefersDarkMode &&
+              'dark:bg-zircon dark:text-nile-blue-900 dark:hover:bg-transparent dark:hover:text-zircon'
+            }`}
           />
 
           <AuthButton
             type='button'
             title='Reset Password?'
             onClick={handleResetPassword}
-            extraClassNames='!bg-transparent !text-nile-blue-900 dark:!text-zircon !border-transparent h-0 shadow-none w-max mx-auto'
+            extraClassNames={`!bg-transparent !text-nile-blue-900 !border-transparent h-0 shadow-none w-max mx-auto ${
+              prefersDarkMode && 'dark:!text-zircon'
+            }`}
           />
 
           <AuthButton
@@ -247,7 +258,9 @@ const Profile = () => {
             onClick={handleDeleteUser}
             disabled={isDeleteLoading}
             isLoading={isDeleteLoading}
-            extraClassNames='!bg-red-600 !text-white dark:!border-transparent h-0'
+            extraClassNames={`!bg-red-600 !text-swan-white h-0 ${
+              prefersDarkMode && 'dark:!border-transparent'
+            }`}
           />
         </form>
       </section>

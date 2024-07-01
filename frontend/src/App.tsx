@@ -8,6 +8,7 @@ import authRoutes from 'routes/auth';
 import NavLayout from 'layouts/NavLayout';
 import AuthLayout from 'layouts/AuthLayout';
 import { PATHS } from 'routes/PathConstants';
+import { addClass, removeClass } from 'utils';
 import { updateUserData } from 'services/userData/userDataSlice';
 import { useAppDispatch, useAppSelector } from 'hooks/useRootStorage';
 
@@ -39,8 +40,6 @@ const App = () => {
 
   useEffect(() => {
     const windowMatchMedia: MediaQueryList = window.matchMedia?.('(prefers-color-scheme: dark)');
-    const isDarkMode: boolean = windowMatchMedia.matches;
-    dispatch(updateUserData({ prefersDarkMode: isDarkMode }));
 
     windowMatchMedia.addEventListener('change', event => {
       dispatch(updateUserData({ prefersDarkMode: event.matches }));
@@ -52,6 +51,12 @@ const App = () => {
       });
     };
   }, []);
+
+  useEffect(() => {
+    const body = document.querySelector('body');
+    if (prefersDarkMode) addClass(body, 'dark:bg-nile-blue-950', 'dark:text-zircon');
+    else removeClass(body, 'dark:bg-nile-blue-950', 'dark:text-zircon');
+  }, [prefersDarkMode]);
 
   const router = createBrowserRouter([
     {

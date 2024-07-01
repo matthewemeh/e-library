@@ -58,10 +58,6 @@ const NavLayout = () => {
 
   useEffect(() => {
     contentRef.current!.addEventListener('scroll', watchContentScroll);
-
-    return () => {
-      contentRef.current!.removeEventListener('scroll', watchContentScroll);
-    };
   }, []);
 
   useEffect(() => {

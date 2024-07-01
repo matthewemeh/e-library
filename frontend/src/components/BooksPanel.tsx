@@ -23,6 +23,7 @@ const BooksPanel: React.FC<Props> = ({
   filterPredicate = () => true
 }) => {
   const [sortQuery, setSortQuery] = useState<SortQuery>();
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const { paginatedBooks, pages, allBooks } = useAppSelector(state => state.bookStore);
   const { page, setPage, isLoading, limit, search, setSearch } = useContext(NavLayoutContext);
 
@@ -70,7 +71,8 @@ const BooksPanel: React.FC<Props> = ({
   };
 
   return (
-    <section className='bg-white p-8 rounded-lg dark:bg-nile-blue-900'>
+    <section
+      className={`bg-swan-white p-8 rounded-lg ${prefersDarkMode && 'dark:bg-nile-blue-900'}`}>
       {sortedBooks.length > 0 && (
         <header className='flex mb-7 items-center justify-between gap-3'>
           {showFilters && (

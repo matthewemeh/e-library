@@ -16,6 +16,7 @@ const Book: React.FC<Props> = ({ book, isAdminMode }) => {
   const navigate = useNavigate();
   const { _id, coverImageUrl, title, authors } = book;
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const { prefersDarkMode } = useAppSelector(state => state.userData);
   const { _id: userID } = useAppSelector(state => state.userStore.currentUser);
   const authorText = authors.length > 1 ? authors[0].concat(' et al') : authors[0];
   const [deleteBook, { error, isError, isSuccess, isLoading }] = useDeleteBookMutation();
@@ -40,7 +41,9 @@ const Book: React.FC<Props> = ({ book, isAdminMode }) => {
   return (
     <div
       onClick={() => navigate(`${isAdminMode ? '/admin' : ''}/books/${_id}`)}
-      className='relative cursor-pointer bg-white rounded-md overflow-clip shadow-lg w-[190px] h-[250px] grid grid-rows-[70%_12%_12%] gap-0.5 dark:bg-nile-blue-950 ease-linear duration-200 hover:scale-105'>
+      className={`relative cursor-pointer bg-swan-white rounded-md overflow-clip shadow-lg w-[190px] h-[250px] grid grid-rows-[70%_12%_12%] gap-0.5 ease-linear duration-200 hover:scale-105 ${
+        prefersDarkMode && 'dark:bg-nile-blue-950'
+      }`}>
       {imageLoaded || <GiBookCover className='w-full h-3/5 absolute z-[1] top-5 left-0' />}
       {isAdminMode && (
         <button

@@ -15,7 +15,7 @@ const BookImage: React.FC<Props> = ({ extraClassNames, imageUrl }) => {
         imageLoaded || ''
       } ${extraClassNames}`}>
       {imageLoaded || (
-        <MdImage className='bg-nile-blue-500 text-white px-4 w-full h-full absolute z-[1] top-1/2 -translate-y-1/2 left-0 animate-pulse' />
+        <MdImage className='bg-nile-blue-500 text-swan-white px-4 w-full h-full absolute z-[1] top-1/2 -translate-y-1/2 left-0 animate-pulse' />
       )}
       <img
         alt=''
