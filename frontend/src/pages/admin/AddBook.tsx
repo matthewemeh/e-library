@@ -67,6 +67,19 @@ const AddBook = () => {
       .split(SEPARATOR)
       .filter(author => author.length > 0);
 
+    let pdfFiles = 0;
+    if (imageContents) {
+      for (let i = 0; i < imageContents.length; i++) {
+        if (imageContents[i].type.includes('pdf')) pdfFiles++;
+      }
+      if (pdfFiles > 1) {
+        return showAlert({
+          duration: 5000,
+          msg: 'Please select only 1 PDF or multiple images but not both'
+        });
+      }
+    }
+
     const bookPayload: AddBookPayload = {
       title,
       pages,
@@ -75,7 +88,8 @@ const AddBook = () => {
       content,
       category,
       imageContents,
-      coverImageContent
+      coverImageContent,
+      isPDF: pdfFiles === 1
     };
 
     createBook(bookPayload);
@@ -201,8 +215,8 @@ const AddBook = () => {
           inputID='image-contents'
           inputName='image-contents'
           inputRef={imageContentsRef}
-          accept={ACCEPTED_IMAGE_TYPES}
           extraLabelClassNames='mt-[15px]'
+          accept={ACCEPTED_IMAGE_TYPES.concat(', .pdf')}
           extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />
 

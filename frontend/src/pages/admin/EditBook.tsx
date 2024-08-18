@@ -75,6 +75,19 @@ const EditBook = () => {
 
     const bookPayload: UpdateBookPayload = { _id: id!, userID };
 
+    let pdfFiles = 0;
+    if (imageContents) {
+      for (let i = 0; i < imageContents.length; i++) {
+        if (imageContents[i].type.includes('pdf')) pdfFiles++;
+      }
+      if (pdfFiles > 1) {
+        return showAlert({
+          duration: 5000,
+          msg: 'Please select only 1 PDF or multiple images but not both'
+        });
+      }
+    }
+
     if (pages !== newPages) bookPayload.pages = newPages;
     if (title !== newTitle) bookPayload.title = newTitle;
     if (content !== newContent) bookPayload.content = newContent;
@@ -86,6 +99,8 @@ const EditBook = () => {
     if (Object.keys(bookPayload).length === 2) {
       return showAlert({ msg: 'No changes made!' });
     }
+
+    bookPayload.isPDF = pdfFiles === 1;
 
     updateBook(bookPayload);
   };
@@ -218,8 +233,8 @@ const EditBook = () => {
           inputID='image-contents'
           inputName='image-contents'
           inputRef={imageContentsRef}
-          accept={ACCEPTED_IMAGE_TYPES}
           extraLabelClassNames='mt-[15px]'
+          accept={ACCEPTED_IMAGE_TYPES.concat(', .pdf')}
           onChange={() => setImageContentsChanged(true)}
           extraInputClassNames={`${prefersDarkMode && 'dark:bg-nile-blue-950'}`}
         />

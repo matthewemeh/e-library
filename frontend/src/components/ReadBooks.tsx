@@ -5,7 +5,7 @@ import { useAppSelector } from 'hooks/useRootStorage';
 const ReadBooks = () => {
   const { allBooks } = useAppSelector(state => state.bookStore);
   const { prefersDarkMode } = useAppSelector(state => state.userData);
-  const { booksRead } = useAppSelector(state => state.userStore.currentUser);
+  const { booksRead = [] } = useAppSelector(state => state.userStore.currentUser);
 
   return booksRead.length > 0 ? (
     <section

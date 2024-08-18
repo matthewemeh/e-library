@@ -18,10 +18,12 @@ connection.once('open', () => console.log('MongoDB database connection establish
 const userRoutes = require('./routes/user');
 const bookRoutes = require('./routes/book');
 const emailRoutes = require('./routes/email');
+const firebaseRoutes = require('./routes/firebase-file');
 
 app.use('/users', userRoutes);
 app.use('/books', bookRoutes);
 app.use('/email', emailRoutes);
+app.use('/firebase-file', firebaseRoutes);
 
 app.use(express.urlencoded({ extended: true }));
 

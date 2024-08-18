@@ -16,6 +16,7 @@ interface Book {
   reads: number;
   pages: number;
   title: string;
+  isPDF: boolean;
   content: string;
   category: string;
   bookmarks: number;

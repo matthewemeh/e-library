@@ -21,8 +21,8 @@ const BookRead = () => {
   const { allBooks } = useAppSelector(state => state.bookStore);
   const { prefersDarkMode } = useAppSelector(state => state.userData);
   const {
-    booksRead,
     _id: userID,
+    booksRead = [],
     bookmarkedBookIDs
   } = useAppSelector(state => state.userStore.currentUser);
   const [pageProgress, setPageProgress] = useState<number>(
@@ -37,7 +37,7 @@ const BookRead = () => {
     { isError: isBookmarkError, error: bookmarkError, isLoading: isBookmarkLoading }
   ] = useIncreaseBookmarksMutation();
 
-  const { title, content, authors, imageContentUrls, createdAt } = allBooks.find(
+  const { title, content, authors, imageContentUrls, createdAt, isPDF } = allBooks.find(
     ({ _id }) => _id === id
   )!;
   const { longMonthName, monthDate, year } = getDateProps(createdAt);
@@ -168,7 +168,13 @@ const BookRead = () => {
       {imageContentUrls.length > 0 && (
         <div className='mb-5 flex flex-col items-center gap-5 flex-wrap'>
           {imageContentUrls.map((imageUrl, index) => (
-            <BookImage key={index} imageUrl={imageUrl} extraClassNames='!w-3/4 !h-fit' />
+            <BookImage
+              key={index}
+              isPDF={isPDF}
+              bookTitle={title}
+              imageUrl={imageUrl}
+              extraClassNames='!w-3/4 !h-fit'
+            />
           ))}
         </div>
       )}
