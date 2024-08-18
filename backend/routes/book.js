@@ -35,7 +35,7 @@ router.route('/').post(upload.any(), async (req, res) => {
     const userPayload = JSON.parse(
       req.files.find(({ fieldname }) => fieldname === USER_PAYLOAD_KEY).buffer
     );
-    const { authors, content, pages, title, userID, category } = userPayload;
+    const { authors, content, pages, title, userID, category, isPDF } = userPayload;
     const page = Number(req.query['page']);
     const limit = Number(req.query['limit']);
 
@@ -48,7 +48,7 @@ router.route('/').post(upload.any(), async (req, res) => {
     const imageContents = req.files.filter(({ fieldname }) =>
       fieldname.includes(IMAGE_CONTENTS_KEY)
     );
-    const newBook = new Book({ authors, content, pages, title, category });
+    const newBook = new Book({ authors, content, pages, title, category, isPDF });
     for (let i = 0; i < imageContents.length; i++) {
       const imageRef = ref(storage, `books/${newBook._id}/${newBook._id}_${i + 1}`);
       const snapshot = await uploadBytes(imageRef, imageContents[i].buffer);
@@ -88,7 +88,7 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
     const userPayload = JSON.parse(
       req.files.find(({ fieldname }) => fieldname === USER_PAYLOAD_KEY).buffer
     );
-    const { reads, pages, title, authors, content, category, bookmarks } = userPayload;
+    const { reads, pages, title, authors, content, category, bookmarks, isPDF } = userPayload;
 
     const { userID } = userPayload;
     const user = await User.findById(userID);
@@ -101,6 +101,7 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
     if (reads) book.reads = reads;
     if (pages) book.pages = pages;
     if (title) book.title = title;
+    if (isPDF) book.isPDF = isPDF;
     if (authors) book.authors = authors;
     if (content) book.content = content;
     if (category) book.category = category;

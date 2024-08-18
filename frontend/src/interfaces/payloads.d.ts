@@ -28,6 +28,7 @@ interface AddBookPayload {
   title: string;
   pages?: number;
   userID: string;
+  isPDF?: boolean;
   content?: string;
   category?: string;
   authors?: string[];
@@ -42,6 +43,7 @@ interface UpdateBookPayload {
   pages?: number;
   title?: string;
   userID: string;
+  isPDF?: boolean;
   content?: string;
   category?: string;
   bookmarks?: number;

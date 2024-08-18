@@ -6,10 +6,10 @@ import { RiBookmarkFill } from 'react-icons/ri';
 import { useParams, Link } from 'react-router-dom';
 import { MdLocalLibrary, MdOutlineDateRange } from 'react-icons/md';
 
-import { getDateProps, minifyViews } from 'utils';
 import PageLayout from 'layouts/PageLayout';
 import BookImage from 'components/BookImage';
 
+import { getDateProps, minifyViews } from 'utils';
 import { useAppSelector } from 'hooks/useRootStorage';
 
 const BookPreview = () => {
@@ -20,6 +20,7 @@ const BookPreview = () => {
     reads,
     pages,
     title,
+    isPDF,
     content,
     authors,
     createdAt,
@@ -78,20 +79,20 @@ const BookPreview = () => {
           Read
         </Link>
 
-        {content && (
+        {content && !isPDF && (
           <p className='mb-4'>
             {content.slice(0, 1000)}
             {content.length > 1000 && '...'}
           </p>
         )}
-        {imageContentUrls.length > 0 && (
+        {imageContentUrls.length > 0 && !isPDF && (
           <div className='mr-5 flex gap-3 h-[120px] flex-wrap'>
             {imageContentUrls.slice(0, 5).map((imageUrl, index) => (
-              <BookImage key={index} imageUrl={imageUrl} />
+              <BookImage key={index} imageUrl={imageUrl} bookTitle={title} isPDF={isPDF} />
             ))}
           </div>
         )}
-        {!content && imageContentUrls.length === 0 && (
+        {(isPDF || (!content && imageContentUrls.length === 0)) && (
           <p className='text-xl'>No preview content available</p>
         )}
       </div>

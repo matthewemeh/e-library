@@ -7,6 +7,7 @@ const BookSchema = new Schema(
     reads: { type: Number, default: 0 },
     pages: { type: Number, default: 0 },
     bookmarks: { type: Number, default: 0 },
+    isPDF: { type: Boolean, default: false },
     authors: { type: [String], default: [] },
     category: { type: String, default: 'all' },
     coverImageUrl: { type: String, default: '' },
