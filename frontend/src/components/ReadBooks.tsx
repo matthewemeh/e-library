@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import BookReadInfo from './BookReadInfo';
 
 import { useAppSelector } from 'hooks/useRootStorage';
@@ -7,7 +8,16 @@ const ReadBooks = () => {
   const { prefersDarkMode } = useAppSelector(state => state.userData);
   const { booksRead = [] } = useAppSelector(state => state.userStore.currentUser);
 
-  return booksRead.length > 0 ? (
+  const bookAvailable: boolean = useMemo(() => {
+    return (
+      booksRead.filter(({ bookID }) => {
+        const bookIndex: number = allBooks.findIndex(({ _id }) => _id === bookID);
+        return bookIndex > -1;
+      }).length > 0
+    );
+  }, [booksRead, allBooks]);
+
+  return bookAvailable ? (
     <section
       className={`mb-7 flex flex-col gap-2 bg-swan-white p-8 rounded-lg ${
         prefersDarkMode && 'dark:bg-nile-blue-900'
