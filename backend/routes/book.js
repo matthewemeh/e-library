@@ -50,7 +50,10 @@ router.route('/').post(upload.any(), async (req, res) => {
     );
     const newBook = new Book({ authors, content, pages, title, category, isPDF });
     for (let i = 0; i < imageContents.length; i++) {
-      const imageRef = ref(storage, `books/${newBook._id}/${newBook._id}_${i + 1}`);
+      const imageRef = ref(
+        storage,
+        `books/${newBook._id}/${newBook._id}_${i + 1}${isPDF ? '.pdf' : ''}`
+      );
       const snapshot = await uploadBytes(imageRef, imageContents[i].buffer);
       const url = await getDownloadURL(snapshot.ref);
       newBook.imageContentUrls.push(url);
@@ -98,10 +101,10 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
     }
     const book = await Book.findById(id);
 
+    book.isPDF = isPDF;
     if (reads) book.reads = reads;
     if (pages) book.pages = pages;
     if (title) book.title = title;
-    if (isPDF) book.isPDF = isPDF;
     if (authors) book.authors = authors;
     if (content) book.content = content;
     if (category) book.category = category;
@@ -114,7 +117,10 @@ router.route('/:id').patch(upload.any(), async (req, res) => {
       book.imageContentUrls = [];
 
       for (let i = 0; i < imageContents.length; i++) {
-        const imageRef = ref(storage, `books/${book._id}/${book._id}_${i + 1}`);
+        const imageRef = ref(
+          storage,
+          `books/${book._id}/${book._id}_${i + 1}${isPDF ? '.pdf' : ''}`
+        );
         const snapshot = await uploadBytes(imageRef, imageContents[i].buffer);
         const url = await getDownloadURL(snapshot.ref);
         book.imageContentUrls.push(url);

@@ -88,6 +88,7 @@ const EditBook = () => {
       }
     }
 
+    const isPDF: boolean = pdfFiles === 1;
     if (pages !== newPages) bookPayload.pages = newPages;
     if (title !== newTitle) bookPayload.title = newTitle;
     if (content !== newContent) bookPayload.content = newContent;
@@ -100,7 +101,7 @@ const EditBook = () => {
       return showAlert({ msg: 'No changes made!' });
     }
 
-    bookPayload.isPDF = pdfFiles === 1;
+    bookPayload.isPDF = isPDF;
 
     updateBook(bookPayload);
   };
@@ -229,7 +230,7 @@ const EditBook = () => {
         <FormInput
           multiple
           type='file'
-          label='Image Contents'
+          label='File Contents'
           inputID='image-contents'
           inputName='image-contents'
           inputRef={imageContentsRef}

@@ -80,16 +80,17 @@ const AddBook = () => {
       }
     }
 
+    const isPDF: boolean = pdfFiles === 1;
     const bookPayload: AddBookPayload = {
       title,
       pages,
+      isPDF,
       userID,
       authors,
       content,
       category,
       imageContents,
-      coverImageContent,
-      isPDF: pdfFiles === 1
+      coverImageContent
     };
 
     createBook(bookPayload);
@@ -211,7 +212,7 @@ const AddBook = () => {
         <FormInput
           multiple
           type='file'
-          label='Image Contents'
+          label='File Contents'
           inputID='image-contents'
           inputName='image-contents'
           inputRef={imageContentsRef}
