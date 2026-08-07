@@ -10,7 +10,7 @@ router.route('/send').post(async (req, res) => {
     if (!to) return res.status(400).send("Could not find 'to' field");
 
     await resend.emails.send({
-      from: 'E-Library <e-library@resend.dev>', // replace with your verified domain later e.g. hello@veltro.com
+      from: 'E-Library <e-library@resend.dev>', // replace with your verified domain later e.g. hello@e-library.com
       to,
       subject: subject || 'E-Library Update',
       text,
